@@ -2,9 +2,14 @@
 session_start();
 
 // If installed, redirect to home
-if (file_exists(__DIR__ . '/lock')) {
+if (file_exists(__DIR__ . '/lock') && file_exists(__DIR__ . '/../config.php')) {
     header('Location: /');
     exit;
+}
+
+// Clear lock file if config is missing (broken state)
+if (file_exists(__DIR__ . '/lock') && !file_exists(__DIR__ . '/../config.php')) {
+    @unlink(__DIR__ . '/lock');
 }
 
 $step = $_GET['step'] ?? 1;
