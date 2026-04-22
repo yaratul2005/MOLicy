@@ -7,8 +7,8 @@
 define('AGF_START', microtime(true));
 define('ROOT_PATH', __DIR__);
 
-// Check if installer is still present
-if (is_dir(ROOT_PATH . '/install') && !file_exists(ROOT_PATH . '/install/lock')) {
+// Check if installed
+if (!file_exists(ROOT_PATH . '/config.php') || (is_dir(ROOT_PATH . '/install') && !file_exists(ROOT_PATH . '/install/lock'))) {
     header('Location: /install/');
     exit;
 }

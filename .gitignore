@@ -1,0 +1,11 @@
+/config.php
+/install/lock
+/storage/cache/*
+!/storage/cache/.gitkeep
+/storage/tmp/*
+!/storage/tmp/.gitkeep
+/storage/avatars/*
+!/storage/avatars/.gitkeep
+/storage/media/*
+!/storage/media/.gitkeep
+/sitemap.xml
