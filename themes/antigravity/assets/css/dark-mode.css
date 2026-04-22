@@ -1,0 +1,25 @@
+/* Dark mode is the default, but here we can define light mode overrides if needed, or accent color overrides */
+
+[data-theme="light"] {
+  --color-void:       #f8f9fa;
+  --color-navy:       #e2e8f0;
+  --color-violet:     #6d28d9;
+  --color-cyan:       #0891b2;
+  --color-amber:      #d97706;
+  
+  --color-text-main:  #1e293b;
+  --color-text-muted: #64748b;
+  
+  --color-surface-1:  #ffffff;
+  --color-surface-2:  #f1f5f9;
+  --color-border:     rgba(0, 0, 0, 0.1);
+}
+
+/* Accent Color Overrides via inline styles or custom theme settings */
+body {
+  --primary-glow: rgba(124, 58, 237, 0.3);
+}
+
+[data-theme="light"] body {
+  --primary-glow: rgba(109, 40, 217, 0.15);
+}

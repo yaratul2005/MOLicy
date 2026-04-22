@@ -1,0 +1,40 @@
+:root {
+  /* Motion Engine — The Antigravity Motion Doctrine */
+  --spring-bounce:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-smooth:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --gravity-fall:     cubic-bezier(0.55, 0, 1, 0.45);
+  --antigravity-rise: cubic-bezier(0, 0.55, 0.45, 1);
+  --elastic-out:      cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  
+  --duration-instant: 120ms;
+  --duration-fast:    220ms;
+  --duration-normal:  380ms;
+  --duration-slow:    600ms;
+  --duration-dramatic:950ms;
+
+  /* Colors (Dark First) */
+  --color-void:       #0a0a0f;
+  --color-navy:       #1a1a2e;
+  --color-violet:     #7c3aed;
+  --color-cyan:       #06b6d4;
+  --color-amber:      #f59e0b;
+  
+  --color-text-main:  #f8f9fa;
+  --color-text-muted: #a0a0b0;
+  
+  --color-surface-1:  #161622;
+  --color-surface-2:  #1f1f33;
+  --color-border:     rgba(255, 255, 255, 0.08);
+
+  /* Fonts */
+  --font-hero:        'Syne', sans-serif;
+  --font-body:        'DM Sans', sans-serif;
+  --font-code:        'JetBrains Mono', monospace;
+  --font-accent:      'Playfair Display', serif;
+  
+  /* Layout */
+  --container-width:  1200px;
+  --radius-sm:        8px;
+  --radius-md:        16px;
+  --radius-lg:        24px;
+}

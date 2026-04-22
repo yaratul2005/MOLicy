@@ -1,0 +1,8 @@
+{
+  "version": "1.0.0",
+  "build": "20260422",
+  "channel": "stable",
+  "installed_modules": ["Forum", "Users", "Search", "Notifications", "Reactions", "Polls", "Mentions"],
+  "schema_version": 1,
+  "last_updated": "2026-04-22T00:00:00Z"
+}

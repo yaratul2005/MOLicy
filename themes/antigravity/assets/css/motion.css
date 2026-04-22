@@ -1,0 +1,57 @@
+/* Motion Library */
+
+/* Fall In (Cards, Modals) */
+.animate-fall-in {
+  animation: fallIn var(--duration-slow) var(--spring-bounce) both;
+}
+
+@keyframes fallIn {
+  0% { transform: translateY(-40px) scale(0.95); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Rise In (Thread List Stagger) */
+.animate-rise-in {
+  animation: riseIn var(--duration-slow) var(--antigravity-rise) both;
+}
+
+@keyframes riseIn {
+  0% { transform: translateY(60px) rotateX(5deg); opacity: 0; }
+  100% { transform: translateY(0) rotateX(0); opacity: 1; }
+}
+
+/* Float Up (Modals from bottom) */
+.animate-float-up {
+  animation: floatUp var(--duration-normal) var(--spring-smooth) both;
+}
+
+@keyframes floatUp {
+  0% { transform: translateY(100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Elastic Expand */
+.animate-elastic-expand {
+  animation: elasticExpand var(--duration-dramatic) var(--elastic-out) both;
+}
+
+@keyframes elasticExpand {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Transitions */
+.transition-spring {
+  transition: all var(--duration-normal) var(--spring-bounce);
+}
+
+.transition-smooth {
+  transition: all var(--duration-fast) var(--spring-smooth);
+}
+
+/* Stagger Utilities */
+.stagger-1 { animation-delay: 50ms; }
+.stagger-2 { animation-delay: 100ms; }
+.stagger-3 { animation-delay: 150ms; }
+.stagger-4 { animation-delay: 200ms; }
+.stagger-5 { animation-delay: 250ms; }
