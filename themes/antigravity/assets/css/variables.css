@@ -13,17 +13,19 @@
   --duration-dramatic:950ms;
 
   /* Colors (Dark First) */
-  --color-void:       #0a0a0f;
-  --color-navy:       #1a1a2e;
-  --color-violet:     #7c3aed;
-  --color-cyan:       #06b6d4;
-  --color-amber:      #f59e0b;
+  --color-void:       #03050a; /* Deep black-blue */
+  --color-navy:       #0b1221; /* Rich navy */
+  --color-violet:     #6366f1; /* Indigo/Violet accent */
+  --color-cyan:       #0ea5e9; /* Sky blue secondary */
+  --color-amber:      #eab308;
+  --color-danger:     #ef4444;
+  --color-success:    #10b981;
   
-  --color-text-main:  #f8f9fa;
-  --color-text-muted: #a0a0b0;
+  --color-text-main:  #f8fafc;
+  --color-text-muted: #94a3b8;
   
-  --color-surface-1:  #161622;
-  --color-surface-2:  #1f1f33;
+  --color-surface-1:  #0f172a; /* Lighter navy surface */
+  --color-surface-2:  #1e293b; /* Elevated navy surface */
   --color-border:     rgba(255, 255, 255, 0.08);
 
   /* Fonts */

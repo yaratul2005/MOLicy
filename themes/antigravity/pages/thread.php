@@ -29,7 +29,7 @@
     <div class="post-list">
         <?php foreach ($posts as $index => $post): ?>
             <article class="thread-card post-card animate-rise-in" id="post-<?= $post['id'] ?>" style="animation-delay:<?= $index * 40 ?>ms">
-                <div class="post-sidebar">
+                <div class="post-header">
                     <a href="/u/<?= htmlspecialchars($post['username']) ?>" class="post-avatar-link">
                         <?php if (!empty($post['avatar'])): ?>
                             <img src="<?= htmlspecialchars($post['avatar']) ?>" alt="<?= htmlspecialchars($post['username']) ?>" class="post-avatar-img">
@@ -37,16 +37,23 @@
                             <div class="post-avatar-initials"><?= strtoupper(substr($post['username'], 0, 1)) ?></div>
                         <?php endif; ?>
                     </a>
-                    <a href="/u/<?= htmlspecialchars($post['username']) ?>" class="post-username"><?= htmlspecialchars($post['username']) ?></a>
-                    <span class="post-trust">Level <?= (int)$post['trust_level'] ?></span>
-                    <span class="post-rep">⭐ <?= number_format((int)$post['reputation']) ?> rep</span>
-                    <span class="post-count">📝 <?= number_format((int)$post['post_count']) ?> posts</span>
-                </div>
-                <div class="post-body">
-                    <div class="post-body-meta">
-                        <span class="post-timestamp"><?= date('M j, Y \a\t g:i A', strtotime($post['created_at'])) ?></span>
-                        <span class="post-number">#<?= $index + 1 ?></span>
+                    <div class="post-user-info">
+                        <div class="post-user-info-top">
+                            <a href="/u/<?= htmlspecialchars($post['username']) ?>" class="post-username"><?= htmlspecialchars($post['username']) ?></a>
+                            <span class="post-trust-badge">Lvl <?= (int)$post['trust_level'] ?></span>
+                        </div>
+                        <div class="post-user-stats">
+                            <span class="post-timestamp"><?= date('M j, Y \a\t g:i A', strtotime($post['created_at'])) ?></span>
+                            <span class="sep">·</span>
+                            <span class="post-rep">⭐ <?= number_format((int)$post['reputation']) ?></span>
+                            <span class="sep">·</span>
+                            <span class="post-count">📝 <?= number_format((int)$post['post_count']) ?></span>
+                        </div>
                     </div>
+                    <div class="post-number">#<?= $index + 1 ?></div>
+                </div>
+                
+                <div class="post-body">
                     <div class="post-content-body">
                         <?= \Core\Markdown::render($post['content']) ?>
                     </div>
@@ -71,14 +78,7 @@
             <form method="POST" action="/thread/<?= htmlspecialchars($thread['slug']) ?>/reply" id="reply-form">
                 <?= \Core\Middleware::csrfField() ?>
                 <div class="editor-wrap">
-                    <div class="editor-toolbar">
-                        <button type="button" class="btn btn-sm editor-btn magnetic" data-command="bold"><b>B</b></button>
-                        <button type="button" class="btn btn-sm editor-btn magnetic" data-command="italic"><i>I</i></button>
-                        <button type="button" class="btn btn-sm editor-btn magnetic" data-command="code">&#60;/&#62;</button>
-                        <button type="button" class="btn btn-sm editor-btn magnetic" data-command="link">🔗</button>
-                        <button type="button" class="btn btn-sm editor-btn magnetic" data-command="image">🖼️</button>
-                    </div>
-                    <textarea name="content" id="post-editor" class="form-control" required rows="6" placeholder="Write your reply… Markdown is supported."></textarea>
+                    <textarea name="content" id="post-editor" class="form-control rich-editor" required rows="6" placeholder="Write your reply… Markdown is supported."></textarea>
                 </div>
                 <div class="reply-submit-row">
                     <div class="reply-char-count"><span id="char-count">0</span> characters</div>
@@ -115,27 +115,32 @@
 .badge-pinned { background: rgba(245,158,11,.15); color: var(--color-amber); }
 
 /* Post card layout */
-.post-card { display: flex; gap: 24px; padding: 24px; margin-bottom: 20px; }
-.post-sidebar { min-width: 120px; max-width: 140px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding-right: 20px; border-right: 1px solid var(--color-border); }
-.post-avatar-img, .post-avatar-initials { width: 72px; height: 72px; border-radius: 50%; margin-bottom: 4px; }
-.post-avatar-img { object-fit: cover; border: 2px solid var(--color-border); }
-.post-avatar-initials { background: linear-gradient(135deg, var(--color-violet), var(--color-cyan)); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 800; color: white; border: 2px solid var(--color-border); }
-.post-avatar-link { text-decoration: none; }
-.post-username { font-weight: 700; color: var(--color-amber); font-size: 0.9rem; text-decoration: none; }
-.post-username:hover { text-decoration: underline; }
-.post-trust, .post-rep, .post-count { font-size: 0.72rem; color: var(--color-text-muted); }
+.post-card { display: flex; flex-direction: column; gap: 20px; padding: 28px; margin-bottom: 24px; border-radius: var(--radius-md); background: var(--color-surface-1); border: 1px solid var(--color-border); }
+.post-header { display: flex; align-items: center; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 16px; position: relative; }
+.post-avatar-img, .post-avatar-initials { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--color-border); }
+.post-avatar-img { object-fit: cover; }
+.post-avatar-initials { background: linear-gradient(135deg, var(--color-violet), var(--color-cyan)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: white; }
+.post-user-info { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.post-user-info-top { display: flex; align-items: center; gap: 10px; }
+.post-username { font-weight: 700; color: var(--color-text-main); font-size: 1.05rem; text-decoration: none; }
+.post-username:hover { color: var(--color-cyan); }
+.post-trust-badge { background: rgba(99,102,241,0.15); color: var(--color-violet); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.post-user-stats { font-size: 0.8rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 8px; }
+.post-number { font-family: var(--font-code); font-size: 0.85rem; color: rgba(255,255,255,0.15); position: absolute; right: 0; top: 0; font-weight: 600; }
 
-.post-body { flex: 1; min-width: 0; }
-.post-body-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--color-text-muted); margin-bottom: 16px; }
-.post-number { font-family: var(--font-code); }
-.post-content-body { font-size: 1rem; line-height: 1.75; word-break: break-word; }
-.post-content-body p { margin-top: 0; margin-bottom: 1em; }
-.post-content-body pre { background: var(--color-surface-2); padding: 12px 16px; border-radius: 8px; overflow-x: auto; }
-.post-content-body code { font-family: var(--font-code); font-size: 0.88em; }
-.post-content-body blockquote { border-left: 3px solid var(--color-violet); margin-left: 0; padding: 8px 16px; color: var(--color-text-muted); font-style: italic; }
-.post-actions { display: flex; gap: 8px; margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--color-border); }
-.post-action-btn { font-size: 0.78rem; padding: 4px 10px; border-radius: 6px; background: var(--glass-bg); border: 1px solid var(--glass-border); color: var(--color-text-muted); cursor: pointer; text-decoration: none; transition: all 180ms var(--spring-smooth); }
-.post-action-btn:hover { border-color: var(--color-violet); color: var(--color-text); }
+.post-body { padding-top: 4px; }
+.post-content-body { font-size: 1.05rem; line-height: 1.8; color: var(--color-text-main); word-break: break-word; font-family: var(--font-body); }
+.post-content-body p { margin-top: 0; margin-bottom: 1.2em; }
+.post-content-body p:last-child { margin-bottom: 0; }
+.post-content-body pre { background: var(--color-void); border: 1px solid rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; overflow-x: auto; margin-bottom: 1.2em; }
+.post-content-body code { font-family: var(--font-code); font-size: 0.9em; color: var(--color-cyan); }
+.post-content-body pre code { color: #e2e8f0; }
+.post-content-body blockquote { border-left: 4px solid var(--color-violet); background: rgba(255,255,255,0.02); padding: 12px 20px; margin: 0 0 1.2em 0; border-radius: 0 8px 8px 0; color: var(--color-text-muted); font-style: italic; }
+.post-content-body img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+.post-actions { display: flex; gap: 10px; margin-top: 24px; }
+.post-action-btn { font-size: 0.85rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); color: var(--color-text-muted); cursor: pointer; text-decoration: none; transition: all 200ms var(--spring-bounce); }
+.post-action-btn:hover { border-color: var(--color-violet); color: var(--color-text-main); background: rgba(99,102,241,0.1); transform: translateY(-2px); }
 
 /* Reply box */
 .reply-box { padding: 28px; }
@@ -147,25 +152,17 @@
 
 /* Mobile */
 @media (max-width: 768px) {
-    .post-card { flex-direction: column; gap: 16px; }
-    .post-sidebar { flex-direction: row; max-width: 100%; padding-right: 0; padding-bottom: 16px; border-right: none; border-bottom: 1px solid var(--color-border); flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 12px; }
-    .post-avatar-img, .post-avatar-initials { width: 44px; height: 44px; margin-bottom: 0; flex-shrink: 0; }
-    .post-avatar-initials { font-size: 1.1rem; }
-    .post-sidebar > *:not(.post-avatar-link):not(.post-avatar-img) { }
     .thread-header h1 { font-size: 1.3rem; }
+    .post-card { padding: 20px; }
+    .post-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .post-user-info-top { flex-wrap: wrap; }
+    .post-number { position: relative; }
     .reply-submit-row { flex-direction: column; gap: 12px; align-items: stretch; }
     .reply-submit-row .btn { width: 100%; justify-content: center; }
 }
 </style>
 
 <script>
-const postEditor = document.getElementById('post-editor');
-if (postEditor) {
-    postEditor.addEventListener('input', () => {
-        document.getElementById('char-count').textContent = postEditor.value.length;
-    });
-}
-
 function quoteReply(postId, username) {
     const postEl = document.getElementById('post-' + postId);
     if (!postEl) return;
@@ -173,15 +170,26 @@ function quoteReply(postId, username) {
     if (!bodyEl) return;
     const text = bodyEl.innerText.trim().substring(0, 300);
     const quoted = `> **@${username}:**\n> ${text.split('\n').join('\n> ')}\n\n`;
-    const editor = document.getElementById('post-editor');
-    if (editor) {
-        editor.value = quoted + editor.value;
-        editor.focus();
-        editor.dispatchEvent(new Event('input'));
-        editor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    if (window.editorInstance) {
+        const current = window.editorInstance.value();
+        window.editorInstance.value(quoted + current);
+        window.editorInstance.codemirror.focus();
+        
+        // Scroll to editor
+        const wrap = document.querySelector('.editor-wrap');
+        if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+}
+
+// Add loading state on submit
+const replyForm = document.getElementById('reply-form');
+if (replyForm) {
+    replyForm.addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        if (btn) btn.classList.add('loading');
+    });
 }
 </script>
 
-<script src="/themes/antigravity/assets/js/editor.js"></script>
 <?php include ROOT_PATH . '/themes/antigravity/partials/footer.php'; ?>

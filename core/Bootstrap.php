@@ -75,7 +75,7 @@ class Bootstrap {
             $isAdminUser = isset($_SESSION['user_id']) && ($_SESSION['trust_level'] ?? 0) >= 5;
             if (!$isAdminUser) {
                 $uri = $_SERVER['REQUEST_URI'] ?? '/';
-                $allowed = ['/login', '/logout'];
+                $allowed = ['/login', '/logout', '/verify-email'];
                 $isAllowed = false;
                 foreach ($allowed as $a) { if (str_starts_with($uri, $a)) { $isAllowed = true; break; } }
                 if (!$isAllowed) {
@@ -95,6 +95,7 @@ class Bootstrap {
         $router->get('/register', 'Modules\Users\AuthController@showRegister');
         $router->post('/register','Modules\Users\AuthController@register');
         $router->get('/logout',   'Modules\Users\AuthController@logout');
+        $router->get('/verify-email', 'Modules\Users\AuthController@verifyEmail');
 
         // ── Forum ───────────────────────────────────────────────────────
         $router->get('/',                        'Modules\Forum\HomeController@index');

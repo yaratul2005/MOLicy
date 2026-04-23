@@ -188,14 +188,10 @@ class SEOManager {
     }
 
     private function getSetting(string $key, string $default = ''): string {
-        $db  = Database::getInstance();
-        $row = $db->fetch("SELECT setting_value FROM settings WHERE setting_key = :k", ['k' => $key]);
-        return $row['setting_value'] ?? $default;
+        return \Core\Settings::get($key, $default);
     }
 
     private static function staticSetting(string $key, string $default = ''): string {
-        $db  = Database::getInstance();
-        $row = $db->fetch("SELECT setting_value FROM settings WHERE setting_key = :k", ['k' => $key]);
-        return $row['setting_value'] ?? $default;
+        return \Core\Settings::get($key, $default);
     }
 }
