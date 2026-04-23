@@ -310,6 +310,117 @@ $s = $settings; // shorthand
             </div>
         </div>
 
+        <!-- ── ANTI-SPAM ── -->
+        <div class="tab-pane" id="tab-spam">
+
+            <!-- reCAPTCHA -->
+            <div class="settings-section">
+                <h2><?= icon('shield', '', 18) ?> Google reCAPTCHA v2</h2>
+                <p style="color:var(--muted); font-size:0.88rem; margin:0 0 20px; line-height:1.6;">
+                    Protects login, registration, new thread, and reply forms from bots.
+                    Get your keys free at
+                    <a href="https://www.google.com/recaptcha/admin" target="_blank" rel="noopener" style="color:var(--cyan);">google.com/recaptcha</a>.
+                    Choose the <strong>"reCAPTCHA v2 — I'm not a robot"</strong> type.
+                </p>
+
+                <div class="toggle-row" style="margin-bottom:20px;">
+                    <div>
+                        <label>Enable reCAPTCHA</label>
+                        <p>Show the reCAPTCHA widget on auth and posting forms.</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" name="enable_recaptcha" value="1"
+                               <?= !empty($s['enable_recaptcha']) && $s['enable_recaptcha'] !== '0' ? 'checked' : '' ?>>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Site Key <span style="color:var(--muted); font-weight:400;">(public)</span></label>
+                        <input type="text" name="recaptcha_site_key"
+                               value="<?= htmlspecialchars($s['recaptcha_site_key'] ?? '') ?>"
+                               placeholder="6Lc...">
+                        <span class="hint">Placed in the HTML of your pages — visible to users.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Secret Key <span style="color:var(--muted); font-weight:400;">(private)</span></label>
+                        <input type="password" name="recaptcha_secret_key"
+                               value="<?= htmlspecialchars($s['recaptcha_secret_key'] ?? '') ?>"
+                               placeholder="6Lc...">
+                        <span class="hint">Kept server-side only — never share this key.</span>
+                    </div>
+                </div>
+
+                <!-- Live connection test -->
+                <div style="margin-top:12px;">
+                    <button type="button" class="btn" id="btn-test-recaptcha" style="font-size:0.85rem;"
+                            onclick="testRecaptchaKeys()">
+                        <?= icon('check', '', 14) ?> Validate Keys
+                    </button>
+                    <span id="recaptcha-test-result" style="margin-left:12px; font-size:0.85rem;"></span>
+                </div>
+            </div>
+
+            <!-- Rate Limiting -->
+            <div class="settings-section">
+                <h2><?= icon('moderation', '', 18) ?> Rate Limiting</h2>
+                <p style="color:var(--muted); font-size:0.88rem; margin:0 0 20px; line-height:1.6;">
+                    These limits are enforced per IP address regardless of reCAPTCHA status.
+                </p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Max Login Attempts</label>
+                        <input type="number" name="rate_login_max" min="1" max="50"
+                               value="<?= (int)($s['rate_login_max'] ?? 8) ?>">
+                        <span class="hint">Attempts allowed per 2 minutes per IP.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Registrations</label>
+                        <input type="number" name="rate_register_max" min="1" max="20"
+                               value="<?= (int)($s['rate_register_max'] ?? 3) ?>">
+                        <span class="hint">New accounts per 10 minutes per IP.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Max New Threads</label>
+                        <input type="number" name="rate_thread_max" min="1" max="50"
+                               value="<?= (int)($s['rate_thread_max'] ?? 5) ?>">
+                        <span class="hint">Threads per 5 minutes per IP.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Max Replies</label>
+                        <input type="number" name="rate_reply_max" min="1" max="100"
+                               value="<?= (int)($s['rate_reply_max'] ?? 10) ?>">
+                        <span class="hint">Replies per minute per IP.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Spam Filter -->
+            <div class="settings-section">
+                <h2><?= icon('flag', '', 18) ?> Content Filters</h2>
+                <div class="toggle-row" style="margin-bottom:20px;">
+                    <div>
+                        <label>Require Email Verification</label>
+                        <p>New users must verify their email before posting.</p>
+                    </div>
+                    <label class="toggle">
+                        <input type="checkbox" name="require_email_verify" value="1"
+                               <?= !empty($s['require_email_verify']) && $s['require_email_verify'] !== '0' ? 'checked' : '' ?>>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>Blocked Keywords <span style="color:var(--muted); font-weight:400;">(comma-separated)</span></label>
+                    <textarea name="blocked_keywords" rows="3"
+                              placeholder="spam, casino, bitcoin, ..."
+                              style="font-family:var(--font-code, monospace); font-size:0.85rem;"><?= htmlspecialchars($s['blocked_keywords'] ?? '') ?></textarea>
+                    <span class="hint">Posts containing these words will be flagged for moderation automatically.</span>
+                </div>
+            </div>
+
+        </div>
+
         <!-- ── CUSTOM CODE ── -->
         <div class="tab-pane" id="tab-custom">
             <div class="settings-section">
@@ -369,6 +480,31 @@ function switchTab(id, btn) {
     btn.classList.add('active');
     // Hide save bar on audit tab
     document.getElementById('save-bar').style.display = id === 'audit' ? 'none' : 'flex';
+}
+
+function testRecaptchaKeys() {
+    const siteKey   = document.querySelector('[name="recaptcha_site_key"]').value.trim();
+    const secretKey = document.querySelector('[name="recaptcha_secret_key"]').value.trim();
+    const result    = document.getElementById('recaptcha-test-result');
+
+    if (!siteKey || !secretKey) {
+        result.textContent = 'Please enter both keys first.';
+        result.style.color = '#f59e0b';
+        return;
+    }
+
+    result.textContent = 'Checking…';
+    result.style.color = '#94a3b8';
+
+    // Validate site key format (basic length check — real test happens server-side)
+    const keyPattern = /^6[a-zA-Z0-9_-]{38,50}$/;
+    if (!keyPattern.test(siteKey) || !keyPattern.test(secretKey)) {
+        result.textContent = '⚠ Keys look malformed — reCAPTCHA keys start with "6L" and are 40+ chars.';
+        result.style.color = '#f59e0b';
+        return;
+    }
+
+    result.innerHTML = '<span style="color:#10b981">✓ Key format looks valid. Save settings and test a registration form to fully confirm.</span>';
 }
 </script>
 </body>

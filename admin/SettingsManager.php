@@ -35,12 +35,18 @@ class SettingsManager {
             'forum_email', 'smtp_host', 'smtp_port', 'smtp_user', 'smtp_pass', 'smtp_secure',
             'home_welcome_enabled', 'home_welcome_title', 'home_welcome_text',
             'enable_recaptcha', 'recaptcha_site_key', 'recaptcha_secret_key',
+            'rate_login_max', 'rate_register_max', 'rate_thread_max', 'rate_reply_max',
+            'blocked_keywords',
+        ];
+
+        $checkboxKeys = [
+            'registration_enabled', 'require_email_verify', 'allow_guest_view',
+            'maintenance_mode', 'noindex_search', 'home_welcome_enabled', 'enable_recaptcha',
         ];
 
         $data = [];
         foreach ($allowed as $key) {
-            // Checkboxes default to 0 if not present in POST
-            if (in_array($key, ['registration_enabled','require_email_verify','allow_guest_view','maintenance_mode','noindex_search','home_welcome_enabled', 'enable_recaptcha'])) {
+            if (in_array($key, $checkboxKeys)) {
                 $data[$key] = isset($_POST[$key]) ? '1' : '0';
             } else {
                 $data[$key] = $_POST[$key] ?? '';
