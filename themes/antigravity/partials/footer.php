@@ -143,7 +143,7 @@
             .then(data => {
                 const list = document.getElementById('notif-list');
                 if (!data.length) {
-                    list.innerHTML = '<div class="notif-empty">All caught up! 🎉</div>'; return;
+                    list.innerHTML = '<div class="notif-empty"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> All caught up!</div>'; return;
                 }
                 list.innerHTML = data.map(n => `
                     <div class="notif-item ${n.is_read ? '' : 'unread'}">
@@ -170,7 +170,13 @@
     }
 
     function getNotifIcon(type) {
-        return {new_reply:'💬', mention:'📣', vote:'⬆️', badge:'🏅'}[type] || '🔔';
+        const icons = {
+            new_reply: '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 15c0 1.1-.9 2-2 2H7l-4 4V5c0-1.1.9-2 2-2h14c1.1 0 2 .9 2 2v10z"/></svg>',
+            mention:   '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10h5v-2h-5c-4.34 0-8-3.66-8-8s3.66-8 8-8 8 3.66 8 8v1.43c0 .79-.71 1.57-1.5 1.57s-1.5-.78-1.5-1.57V12c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5c1.38 0 2.64-.56 3.54-1.47.65.89 1.77 1.47 2.96 1.47 1.97 0 3.5-1.6 3.5-3.57V12c0-5.52-4.48-10-10-10zm0 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>',
+            vote:      '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/></svg>',
+            badge:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>',
+        };
+        return icons[type] || '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>';
     }
 
     function formatNotif(n) {

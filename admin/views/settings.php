@@ -1,4 +1,4 @@
-<?php
+<?php require ROOT_PATH . '/themes/antigravity/partials/icons.php'; ?>
 /**
  * ACP Settings View
  * @var array  $settings   All current settings
@@ -87,15 +87,15 @@ $s = $settings; // shorthand
     <div class="acp-logo">Anti<span>Gravity</span> ACP</div>
     <nav class="acp-nav">
         <div class="nav-section">Core</div>
-        <a href="/admin">📊 Dashboard</a>
-        <a href="/admin/users">👥 Users</a>
-        <a href="/admin/content">📝 Content</a>
-        <a href="/admin/categories">📁 Categories</a>
-        <a href="/admin/moderation">🚩 Moderation</a>
+        <a href="/admin"><?= icon('chart') ?> Dashboard</a>
+        <a href="/admin/users"><?= icon('users') ?> Users</a>
+        <a href="/admin/content"><?= icon('content') ?> Content</a>
+        <a href="/admin/categories"><?= icon('categories') ?> Categories</a>
+        <a href="/admin/moderation"><?= icon('shield') ?> Moderation</a>
         <div class="nav-section">System</div>
-        <a href="/admin/seo">🔍 SEO Manager</a>
-        <a href="/admin/updates">🔄 Updates</a>
-        <a href="/admin/settings" class="active">⚙️ Settings</a>
+        <a href="/admin/seo"><?= icon('search') ?> SEO Manager</a>
+        <a href="/admin/updates"><?= icon('updates') ?> Updates</a>
+        <a href="/admin/settings" class="active"><?= icon('settings') ?> Settings</a>
     </nav>
     <div class="acp-sidebar-footer">
         <a href="/">← View Forum</a>
@@ -115,13 +115,13 @@ $s = $settings; // shorthand
 
     <!-- Tabs -->
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('general', this)">🌐 General</button>
-        <button class="tab-btn" onclick="switchTab('features', this)">🔧 Features</button>
-        <button class="tab-btn" onclick="switchTab('appearance', this)">🎨 Appearance</button>
-        <button class="tab-btn" onclick="switchTab('email', this)">📧 Email / SMTP</button>
-        <button class="tab-btn" onclick="switchTab('spam', this)">🛡️ Anti-Spam</button>
-        <button class="tab-btn" onclick="switchTab('custom', this)">💻 Custom Code</button>
-        <button class="tab-btn" onclick="switchTab('audit', this)">📋 Audit Log</button>
+        <button class="tab-btn active" onclick="switchTab('general', this)"><?= icon('globe', '', 15) ?> General</button>
+        <button class="tab-btn" onclick="switchTab('features', this)"><?= icon('settings', '', 15) ?> Features</button>
+        <button class="tab-btn" onclick="switchTab('appearance', this)"><?= icon('paintbrush', '', 15) ?> Appearance</button>
+        <button class="tab-btn" onclick="switchTab('email', this)"><?= icon('email', '', 15) ?> Email / SMTP</button>
+        <button class="tab-btn" onclick="switchTab('spam', this)"><?= icon('shield', '', 15) ?> Anti-Spam</button>
+        <button class="tab-btn" onclick="switchTab('custom', this)"><?= icon('code', '', 15) ?> Custom Code</button>
+        <button class="tab-btn" onclick="switchTab('audit', this)"><?= icon('analytics', '', 15) ?> Audit Log</button>
     </div>
 
     <form action="/admin/settings/save" method="POST">
@@ -130,7 +130,7 @@ $s = $settings; // shorthand
         <!-- ── GENERAL ── -->
         <div class="tab-pane active" id="tab-general">
             <div class="settings-section">
-                <h2>🌐 Site Identity</h2>
+                <h2><?= icon('globe', '', 18) ?> Site Identity</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Site Title</label>
@@ -181,7 +181,7 @@ $s = $settings; // shorthand
             </div>
 
             <div class="settings-section">
-                <h2>🏠 Homepage Welcome Block</h2>
+                <h2><?= icon('home', '', 18) ?> Homepage Welcome Block</h2>
                 <div class="toggle-row">
                     <div><label>Enable Welcome Banner</label><p>Show a large hero section on the homepage.</p></div>
                     <label class="toggle"><input type="checkbox" name="home_welcome_enabled" value="1" <?= !empty($s['home_welcome_enabled']) && $s['home_welcome_enabled'] !== '0' ? 'checked' : '' ?>><span class="toggle-slider"></span></label>
@@ -199,7 +199,7 @@ $s = $settings; // shorthand
             </div>
 
             <div class="settings-section">
-                <h2>🚧 Maintenance Mode</h2>
+                <h2><?= icon('maintenance', '', 18) ?> Maintenance Mode</h2>
                 <div class="toggle-row">
                     <div><label>Enable Maintenance Mode</label><p>Shows a maintenance notice to all non-admin visitors. Admins can still browse normally.</p></div>
                     <label class="toggle"><input type="checkbox" name="maintenance_mode" value="1" <?= !empty($s['maintenance_mode']) && $s['maintenance_mode'] !== '0' ? 'checked' : '' ?>><span class="toggle-slider"></span></label>
@@ -214,7 +214,7 @@ $s = $settings; // shorthand
         <!-- ── FEATURES ── -->
         <div class="tab-pane" id="tab-features">
             <div class="settings-section">
-                <h2>👥 User Registration</h2>
+                <h2><?= icon('users', '', 18) ?> User Registration</h2>
                 <div class="toggle-row">
                     <div><label>Allow New Registrations</label><p>Users can create new accounts.</p></div>
                     <label class="toggle"><input type="checkbox" name="registration_enabled" value="1" <?= ($s['registration_enabled'] ?? '1') !== '0' ? 'checked' : '' ?>><span class="toggle-slider"></span></label>
@@ -230,7 +230,7 @@ $s = $settings; // shorthand
             </div>
 
             <div class="settings-section">
-                <h2>📄 Pagination</h2>
+                <h2><?= icon('pagination', '', 18) ?> Pagination</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Threads per Page</label>
@@ -244,7 +244,7 @@ $s = $settings; // shorthand
             </div>
 
             <div class="settings-section">
-                <h2>📁 File Uploads</h2>
+                <h2><?= icon('upload', '', 18) ?> File Uploads</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Max Upload Size (MB)</label>
@@ -262,7 +262,7 @@ $s = $settings; // shorthand
         <!-- ── APPEARANCE ── -->
         <div class="tab-pane" id="tab-appearance">
             <div class="settings-section">
-                <h2>🎨 Theme</h2>
+                <h2><?= icon('paintbrush', '', 18) ?> Theme</h2>
                 <div class="form-group">
                     <label>Active Theme</label>
                     <select name="site_theme">
@@ -279,7 +279,7 @@ $s = $settings; // shorthand
         <!-- ── EMAIL ── -->
         <div class="tab-pane" id="tab-email">
             <div class="settings-section">
-                <h2>📧 SMTP Configuration</h2>
+                <h2><?= icon('email', '', 18) ?> Outgoing Email (SMTP)</h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>SMTP Host</label>
@@ -312,14 +312,14 @@ $s = $settings; // shorthand
         <!-- ── CUSTOM CODE ── -->
         <div class="tab-pane" id="tab-custom">
             <div class="settings-section">
-                <h2>💻 Custom CSS</h2>
+                <h2><?= icon('code', '', 18) ?> Custom CSS</h2>
                 <div class="form-group form-grid single">
                     <textarea name="custom_css" class="code-editor" placeholder="/* Your custom CSS here */"><?= htmlspecialchars($s['custom_css'] ?? '') ?></textarea>
                     <span class="hint">Injected in <code>&lt;/head&gt;</code> on every page.</span>
                 </div>
             </div>
             <div class="settings-section">
-                <h2>💻 Custom JavaScript</h2>
+                <h2><?= icon('code', '', 18) ?> Custom JavaScript</h2>
                 <div class="form-group form-grid single">
                     <textarea name="custom_js" class="code-editor" placeholder="// Your custom JS here"><?= htmlspecialchars($s['custom_js'] ?? '') ?></textarea>
                     <span class="hint">Injected before <code>&lt;/body&gt;</code> on every page.</span>
@@ -330,7 +330,7 @@ $s = $settings; // shorthand
         <!-- ── AUDIT LOG (no form) ── -->
         <div class="tab-pane" id="tab-audit">
             <div class="settings-section">
-                <h2>📋 Admin Audit Log (last 30 actions)</h2>
+                <h2><?= icon('analytics', '', 18) ?> Admin Audit Log (last 30 actions)</h2>
                 <table class="audit-table">
                     <thead>
                         <tr><th>Time</th><th>Admin</th><th>Action</th><th>Target</th><th>IP</th></tr>

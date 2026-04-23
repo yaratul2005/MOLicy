@@ -1,4 +1,7 @@
-<?php include ROOT_PATH . '/themes/antigravity/partials/header.php'; ?>
+<?php 
+require ROOT_PATH . '/themes/antigravity/partials/icons.php';
+include ROOT_PATH . '/themes/antigravity/partials/header.php'; 
+?>
 
 <div class="content-left">
     <!-- Hero Section -->
@@ -9,11 +12,11 @@
             <p>Join thousands of thinkers sharing ideas, solving problems, and building community together.</p>
             <div class="hero-cta">
                 <?php if (\Core\Auth::check()): ?>
-                    <a href="/thread/create" class="btn btn-primary magnetic">✍️ Start a Thread</a>
-                    <a href="/search" class="btn magnetic">🔍 Search Topics</a>
+                    <a href="/thread/create" class="btn btn-primary magnetic"><?= icon('plus', '', 15) ?> Start a Thread</a>
+                    <a href="/search" class="btn magnetic"><?= icon('search', '', 15) ?> Search Topics</a>
                 <?php else: ?>
-                    <a href="/register" class="btn btn-primary magnetic">🚀 Join Free</a>
-                    <a href="/login" class="btn magnetic">🔑 Sign In</a>
+                    <a href="/register" class="btn btn-primary magnetic"><?= icon('users2', '', 15) ?> Join Free</a>
+                    <a href="/login" class="btn magnetic"><?= icon('lock', '', 15) ?> Sign In</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -86,8 +89,8 @@
                         <div class="thread-row-meta">By <a href="/u/<?= htmlspecialchars($t['username']) ?>" class="user-link"><?= htmlspecialchars($t['username']) ?></a> · <?= date('M j', strtotime($t['created_at'])) ?></div>
                     </div>
                     <div class="thread-row-stats">
-                        <span>💬 <?= number_format($t['reply_count'] ?? 0) ?></span>
-                        <span>👁 <?= number_format($t['views'] ?? 0) ?></span>
+                        <span><?= icon('replies', '', 14) ?> <?= number_format($t['reply_count'] ?? 0) ?></span>
+                        <span><?= icon('views', '', 14) ?> <?= number_format($t['views'] ?? 0) ?></span>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -108,8 +111,8 @@
     <div class="widget thread-card animate-fall-in stagger-1">
         <h3>Quick Links</h3>
         <ul style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px;">
-            <li><a href="/thread/create" style="color:var(--color-cyan); text-decoration:none; font-size:0.9rem;">✍️ Start a New Thread</a></li>
-            <li><a href="/search" style="color:var(--color-cyan); text-decoration:none; font-size:0.9rem;">🔍 Search the Forum</a></li>
+            <li><a href="/thread/create" style="color:var(--color-cyan); text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:6px;"><?= icon('plus', '', 14) ?> Start a New Thread</a></li>
+            <li><a href="/search" style="color:var(--color-cyan); text-decoration:none; font-size:0.9rem; display:flex; align-items:center; gap:6px;"><?= icon('search', '', 14) ?> Search the Forum</a></li>
         </ul>
     </div>
 </aside>

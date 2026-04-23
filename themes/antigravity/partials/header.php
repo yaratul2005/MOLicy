@@ -56,13 +56,13 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
     <!-- JSON-LD: Website schema on every page -->
     <?= \Admin\SEOManager::schema('website', []) ?>
 
-    <!-- Inline critical view transition CSS -->
+    <!-- Inline critical page transition CSS (no @view-transition to avoid DOM timeout) -->
     <style>
-        @view-transition { navigation: auto; }
-        ::view-transition-old(main-content) { animation: 180ms ease-out both slide-out; }
-        ::view-transition-new(main-content) { animation: 280ms var(--spring-bounce, cubic-bezier(0.34,1.56,0.64,1)) both slide-in; }
-        @keyframes slide-out { to { opacity:0; transform:translateY(-8px); } }
-        @keyframes slide-in  { from { opacity:0; transform:translateY(12px); } }
+        /* Smooth page transitions via JS-driven class toggling */
+        .page-exit { animation: 180ms ease-out both page-fade-out; }
+        .page-enter { animation: 300ms cubic-bezier(0.34,1.56,0.64,1) both page-fade-in; }
+        @keyframes page-fade-out { to { opacity:0; transform:translateY(-6px); } }
+        @keyframes page-fade-in  { from { opacity:0; transform:translateY(10px); } }
     </style>
     <?php if (!empty($customCss)): ?>
     <style id="custom-css"><?= $customCss ?></style>
@@ -100,14 +100,20 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
 
                 <!-- Nav Right -->
                 <nav class="header-nav" aria-label="Main navigation">
-                    <a href="/members" class="btn magnetic" style="display:none" id="btn-members">👥 Members</a>
-                    <a href="/thread/create" class="btn btn-primary magnetic" id="btn-new-thread">✍️ New Thread</a>
+                    <a href="/members" class="btn magnetic" style="display:none" id="btn-members">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        Members
+                    </a>
+                    <a href="/thread/create" class="btn btn-primary magnetic" id="btn-new-thread">
+                        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                        New Thread
+                    </a>
 
                     <?php if ($currentUser): ?>
                         <!-- Notifications Bell -->
                         <div class="notif-wrap" id="notif-wrap">
                             <button class="notif-btn magnetic" id="notif-btn" aria-label="Notifications" aria-expanded="false">
-                                🔔
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                                 <span class="notif-badge" id="notif-badge" style="display:none">0</span>
                             </button>
                             <div class="notif-dropdown" id="notif-dropdown" role="menu" aria-hidden="true">
@@ -138,7 +144,10 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
                         </a>
 
                         <?php if (($currentUser['trust_level'] ?? 0) >= 5): ?>
-                            <a href="/admin" class="btn magnetic" style="background:rgba(245,158,11,.15);border-color:#f59e0b;color:#f59e0b">⚙️ ACP</a>
+                            <a href="/admin" class="btn magnetic" style="background:rgba(245,158,11,.15);border-color:#f59e0b;color:#f59e0b">
+                                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 0 4.93 19.07 10 10 0 0 0 19.07 4.93z"/></svg>
+                                ACP
+                            </a>
                         <?php endif; ?>
                         <a href="/logout" class="btn magnetic" data-no-transition>Logout</a>
 
@@ -152,3 +161,5 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
 
         <main class="main-content" id="main">
             <div class="container">
+
+

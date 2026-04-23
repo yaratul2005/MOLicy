@@ -24,19 +24,19 @@
     Header set X-XSS-Protection "1; mode=block"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-    # Relax CSP temporarily for reCAPTCHA and EasyMDE
-    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-src 'self' https://www.google.com;"
+    # Allow data: URIs for PageSpeed/mod_pagespeed injected scripts, reCAPTCHA, and EasyMDE
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://cdnjs.cloudflare.com https://unpkg.com https://www.google.com https://www.gstatic.com https://www.recaptcha.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self'; frame-src 'self' https://www.google.com https://www.recaptcha.net;"
 </IfModule>
 
 # Smart Browser Caching for Fast UI/Animations
 <IfModule mod_expires.c>
     ExpiresActive On
-    
+
     # CSS and Javascript - cache for 1 year
     ExpiresByType text/css "access plus 1 year"
     ExpiresByType application/javascript "access plus 1 year"
     ExpiresByType application/x-javascript "access plus 1 year"
-    
+
     # Images and Media - cache for 1 month
     ExpiresByType image/jpeg "access plus 1 month"
     ExpiresByType image/webp "access plus 1 month"
@@ -44,13 +44,13 @@
     ExpiresByType image/gif "access plus 1 month"
     ExpiresByType image/svg+xml "access plus 1 month"
     ExpiresByType image/x-icon "access plus 1 month"
-    
+
     # Web Fonts - cache for 1 year
     ExpiresByType font/woff2 "access plus 1 year"
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/ttf "access plus 1 year"
-    
-    # Data - do not cache HTML, JSON, or XML by default to ensure dynamic freshness
+
+    # Data - do not cache HTML/JSON/PHP
     ExpiresByType text/html "access plus 0 seconds"
     ExpiresByType application/json "access plus 0 seconds"
 </IfModule>

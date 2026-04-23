@@ -1,6 +1,7 @@
 <?php 
 $recaptchaEnabled = \Core\Settings::get('enable_recaptcha') === '1';
 $siteKey = \Core\Settings::get('recaptcha_site_key');
+require ROOT_PATH . '/themes/antigravity/partials/icons.php';
 include ROOT_PATH . '/themes/antigravity/partials/header.php'; 
 ?>
 
@@ -26,10 +27,10 @@ include ROOT_PATH . '/themes/antigravity/partials/header.php';
             <span class="sep">·</span>
             <span><?= number_format($thread['views'] ?? 0) ?> views</span>
             <?php if ($thread['is_locked'] ?? false): ?>
-                <span class="badge-locked">🔒 Locked</span>
+                <span class="badge-locked"><?= icon('lock', '', 12) ?> Locked</span>
             <?php endif; ?>
             <?php if ($thread['is_pinned'] ?? false): ?>
-                <span class="badge-pinned">📌 Pinned</span>
+                <span class="badge-pinned"><?= icon('pin', '', 12) ?> Pinned</span>
             <?php endif; ?>
         </div>
     </div>
@@ -53,9 +54,9 @@ include ROOT_PATH . '/themes/antigravity/partials/header.php';
                         <div class="post-user-stats">
                             <span class="post-timestamp"><?= date('M j, Y \a\t g:i A', strtotime($post['created_at'])) ?></span>
                             <span class="sep">·</span>
-                            <span class="post-rep">⭐ <?= number_format((int)$post['reputation']) ?></span>
+                            <span class="post-rep"><?= icon('star', 'vertical-align:middle', 13) ?> <?= number_format((int)$post['reputation']) ?></span>
                             <span class="sep">·</span>
-                            <span class="post-count">📝 <?= number_format((int)$post['post_count']) ?></span>
+                            <span class="post-count"><?= icon('posts', 'vertical-align:middle', 13) ?> <?= number_format((int)$post['post_count']) ?></span>
                         </div>
                     </div>
                     <div class="post-number">#<?= $index + 1 ?></div>
@@ -67,9 +68,9 @@ include ROOT_PATH . '/themes/antigravity/partials/header.php';
                     </div>
                     <div class="post-actions">
                         <?php if (\Core\Auth::check()): ?>
-                            <button class="post-action-btn magnetic" onclick="quoteReply(<?= $post['id'] ?>, '<?= htmlspecialchars(addslashes($post['username'])) ?>')">💬 Quote</button>
+                            <button class="post-action-btn magnetic" onclick="quoteReply(<?= $post['id'] ?>, '<?= htmlspecialchars(addslashes($post['username'])) ?>')"><?= icon('replies', 'vertical-align:middle', 14) ?> Quote</button>
                         <?php endif; ?>
-                        <a href="#post-<?= $post['id'] ?>" class="post-action-btn">🔗 Link</a>
+                        <a href="#post-<?= $post['id'] ?>" class="post-action-btn"><?= icon('link', 'vertical-align:middle', 14) ?> Link</a>
                     </div>
                 </div>
             </article>

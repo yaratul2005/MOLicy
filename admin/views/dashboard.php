@@ -8,6 +8,7 @@
  * @var array $health      System health info
  */
 $csrfToken = \Core\Middleware::getCSRFToken();
+require __DIR__ . '/../../../themes/antigravity/partials/icons.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
@@ -311,23 +312,23 @@ $csrfToken = \Core\Middleware::getCSRFToken();
     <div class="acp-logo">Anti<span>Gravity</span> ACP</div>
     <nav class="acp-nav">
         <div class="nav-section">Core</div>
-        <a href="/admin" class="active">📊 Dashboard</a>
-        <a href="/admin/users">👥 Users</a>
-        <a href="/admin/content">📝 Content</a>
-        <a href="/admin/categories">📁 Categories</a>
-        <a href="/admin/moderation">🚩 Moderation</a>
+        <a href="/admin" class="active"><?= icon('chart') ?> Dashboard</a>
+        <a href="/admin/users"><?= icon('users') ?> Users</a>
+        <a href="/admin/content"><?= icon('content') ?> Content</a>
+        <a href="/admin/categories"><?= icon('categories') ?> Categories</a>
+        <a href="/admin/moderation"><?= icon('shield') ?> Moderation</a>
 
         <div class="nav-section">System</div>
-        <a href="/admin/seo">🔍 SEO Manager</a>
-        <a href="/admin/theme">🎨 Theme Engine</a>
-        <a href="/admin/plugins">🧩 Plugins</a>
-        <a href="/admin/updates">🔄 Updates</a>
-        <a href="/admin/analytics">📈 Analytics</a>
-        <a href="/admin/settings">⚙️ Settings</a>
+        <a href="/admin/seo"><?= icon('search') ?> SEO Manager</a>
+        <a href="/admin/theme"><?= icon('paintbrush') ?> Theme Engine</a>
+        <a href="/admin/plugins"><?= icon('plugin') ?> Plugins</a>
+        <a href="/admin/updates"><?= icon('updates') ?> Updates</a>
+        <a href="/admin/analytics"><?= icon('analytics') ?> Analytics</a>
+        <a href="/admin/settings"><?= icon('settings') ?> Settings</a>
     </nav>
     <div class="acp-sidebar-footer">
-        <a href="/">← View Forum</a><br><br>
-        <a href="/logout">🚪 Logout</a>
+        <a href="/">&larr; View Forum</a><br><br>
+        <a href="/logout"><?= icon('logout') ?> Logout</a>
     </div>
 </aside>
 
@@ -336,26 +337,26 @@ $csrfToken = \Core\Middleware::getCSRFToken();
     <div class="acp-topbar">
         <h1>Command Center</h1>
         <div class="quick-actions">
-            <button class="qa-btn" onclick="quickAction('clear_cache')">🗑️ Clear Cache</button>
-            <a href="/admin/content/moderation" class="qa-btn">🚩 Review Queue</a>
-            <a href="/thread/create" class="qa-btn">✍️ New Thread</a>
+            <button class="qa-btn" onclick="quickAction('clear_cache')"><?= icon('trash', '', 15) ?> Clear Cache</button>
+            <a href="/admin/content/moderation" class="qa-btn"><?= icon('flag', '', 15) ?> Review Queue</a>
+            <a href="/thread/create" class="qa-btn"><?= icon('plus', '', 15) ?> New Thread</a>
         </div>
     </div>
 
     <!-- Stats -->
     <div class="stat-grid">
         <div class="stat-card" style="--card-glow: rgba(124,58,237,.2)">
-            <div class="stat-icon">👥</div>
+            <div class="stat-icon"><?= icon('users', 'opacity:.9', 28) ?></div>
             <span class="stat-val count-up" data-target="<?= (int)$stats['totalUsers'] ?>">0</span>
             <span class="stat-lbl">Total Users</span>
         </div>
         <div class="stat-card" style="--card-glow: rgba(6,182,212,.2)">
-            <div class="stat-icon">💬</div>
+            <div class="stat-icon"><?= icon('threads', 'opacity:.9', 28) ?></div>
             <span class="stat-val count-up" data-target="<?= (int)$stats['totalThreads'] ?>">0</span>
             <span class="stat-lbl">Threads</span>
         </div>
         <div class="stat-card" style="--card-glow: rgba(16,185,129,.2)">
-            <div class="stat-icon">📝</div>
+            <div class="stat-icon"><?= icon('content', 'opacity:.9', 28) ?></div>
             <span class="stat-val count-up" data-target="<?= (int)$stats['totalPosts'] ?>">0</span>
             <span class="stat-lbl">Posts</span>
         </div>
