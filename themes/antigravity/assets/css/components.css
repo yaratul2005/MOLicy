@@ -124,3 +124,70 @@
 
 .badge-primary { background: rgba(124, 58, 237, 0.2); color: #d8b4fe; }
 .badge-success { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+
+/* ── Empty State ─────────────────────────────────────────────────── */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+}
+
+/* ── Thread card hover disabled for post cards ───────────────────── */
+.post-card:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* ── Utilities ───────────────────────────────────────────────────── */
+.user-link { color: var(--color-amber); text-decoration: none; font-weight: 600; }
+.user-link:hover { text-decoration: underline; }
+
+/* ── Widget ──────────────────────────────────────────────────────── */
+.widget { margin-bottom: 20px; }
+.widget h3 { font-size: 1rem; margin-bottom: 14px; }
+
+/* ── Global Mobile Responsive Pass ──────────────────────────────── */
+@media (max-width: 768px) {
+    /* Global body padding */
+    body { font-size: 15px; }
+
+    /* Main content: single column */
+    .main-content > .container {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
+
+    /* Header: tighter */
+    .site-header { padding: 0.6rem 0; }
+    .header-search { display: none; }
+    .user-chip-name { display: none; }
+    .notif-dropdown { width: 290px; right: -40px; }
+
+    /* Thread cards */
+    .thread-card { padding: 16px; }
+    .thread-card .title { font-size: 1.1rem; }
+
+    /* Buttons */
+    .btn { padding: 10px 16px; font-size: 0.9rem; }
+
+    /* Sidebar stacks below */
+    .sidebar { order: 2; }
+    .content-left { order: 1; }
+
+    /* Category grid */
+    .category-grid { grid-template-columns: 1fr !important; }
+
+    /* ACP sidebar overlay */
+    .acp-sidebar { display: none; }
+    body.acp-open .acp-sidebar { display: flex; position: fixed; left: 0; top: 0; z-index: 999; width: 260px; height: 100vh; box-shadow: 0 0 60px rgba(0,0,0,0.7); }
+    .acp-main { padding: 24px 16px; }
+}
+
+@media (max-width: 480px) {
+    .hero-cta { flex-direction: column; }
+    .hero-cta .btn { width: 100%; justify-content: center; }
+    .stats-bar { padding: 12px; }
+    .stat-item { padding: 0 12px; }
+}
+

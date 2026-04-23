@@ -357,3 +357,46 @@ h1, h2, h3, h4, h5, h6 {
   padding: 40px 0;
   margin-top: auto;
 }
+
+/* ── Mobile Hamburger Button ─────────────────────────────────────── */
+.mobile-menu-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    flex-shrink: 0;
+}
+.mobile-menu-btn span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: 2px;
+    transition: all 240ms var(--spring-smooth);
+}
+body.nav-open .mobile-menu-btn span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+body.nav-open .mobile-menu-btn span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+body.nav-open .mobile-menu-btn span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 768px) {
+    .mobile-menu-btn { display: flex; }
+    .header-nav {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(7,7,13,.97);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        z-index: 500;
+    }
+    body.nav-open .header-nav { display: flex; }
+    .header-nav .btn { min-width: 200px; justify-content: center; font-size: 1.1rem; }
+}
+

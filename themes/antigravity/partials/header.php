@@ -55,6 +55,11 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
         <header class="site-header" id="site-header">
             <div class="container header-inner">
 
+                <!-- Mobile menu toggle -->
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu" onclick="document.body.classList.toggle('nav-open')">
+                    <span></span><span></span><span></span>
+                </button>
+
                 <!-- Logo -->
                 <a href="/" class="site-logo" data-no-transition>
                     <span class="logo-text">Anti<span class="logo-accent">Gravity</span></span>
@@ -108,7 +113,7 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
                             <span class="user-chip-name"><?= htmlspecialchars($currentUser['username']) ?></span>
                         </a>
 
-                        <?php if (($currentUser['role'] ?? '') === 'admin'): ?>
+                        <?php if (($currentUser['trust_level'] ?? 0) >= 5): ?>
                             <a href="/admin" class="btn magnetic" style="background:rgba(245,158,11,.15);border-color:#f59e0b;color:#f59e0b">⚙️ ACP</a>
                         <?php endif; ?>
                         <a href="/logout" class="btn magnetic" data-no-transition>Logout</a>
