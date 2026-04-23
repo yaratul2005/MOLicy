@@ -6,9 +6,15 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)/$ /$1 [L,R=301]
 
-    # Handle Front Controller
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
+    # 1. Serve existing files directly
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # 2. Allow the install directory to be handled by Apache's mod_dir
+    RewriteCond %{REQUEST_URI} ^/install [NC]
+    RewriteRule ^ - [L]
+
+    # 3. Everything else goes to the Front Controller
     RewriteRule ^ index.php [L]
 </IfModule>
 
