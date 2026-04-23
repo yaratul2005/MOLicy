@@ -94,8 +94,9 @@ class Bootstrap {
         $router->post('/login',   'Modules\Users\AuthController@login');
         $router->get('/register', 'Modules\Users\AuthController@showRegister');
         $router->post('/register','Modules\Users\AuthController@register');
-        $router->get('/logout',   'Modules\Users\AuthController@logout');
-        $router->get('/verify-email', 'Modules\Users\AuthController@verifyEmail');
+        $router->get('/logout',       'Modules\\Users\\AuthController@logout');
+        $router->get('/verify-email',  'Modules\\Users\\AuthController@verifyEmail');
+        $router->get('/verify-pending','Modules\\Users\\AuthController@verifyPending');
 
         // ── Forum ───────────────────────────────────────────────────────
         $router->get('/',                        'Modules\Forum\HomeController@index');
