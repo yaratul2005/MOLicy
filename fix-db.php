@@ -3,6 +3,7 @@
  * Temporary Migration Fixer
  * Run this once to apply Phase 4 schemas if you installed before the installer was patched.
  */
+define('ROOT_PATH', __DIR__);
 require __DIR__ . '/core/Bootstrap.php';
 $app = new \Core\Bootstrap(); // Initialize autoloader and config
 
