@@ -8,7 +8,7 @@
  * @var array $health      System health info
  */
 $csrfToken = \Core\Middleware::getCSRFToken();
-require __DIR__ . '/../../../themes/antigravity/partials/icons.php';
+require __DIR__ . '/../../themes/antigravity/partials/icons.php';
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
