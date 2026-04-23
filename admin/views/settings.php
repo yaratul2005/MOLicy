@@ -119,6 +119,7 @@ $s = $settings; // shorthand
         <button class="tab-btn" onclick="switchTab('features', this)">🔧 Features</button>
         <button class="tab-btn" onclick="switchTab('appearance', this)">🎨 Appearance</button>
         <button class="tab-btn" onclick="switchTab('email', this)">📧 Email / SMTP</button>
+        <button class="tab-btn" onclick="switchTab('spam', this)">🛡️ Anti-Spam</button>
         <button class="tab-btn" onclick="switchTab('custom', this)">💻 Custom Code</button>
         <button class="tab-btn" onclick="switchTab('audit', this)">📋 Audit Log</button>
     </div>

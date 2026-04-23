@@ -1,4 +1,12 @@
-<?php include ROOT_PATH . '/themes/antigravity/partials/header.php'; ?>
+<?php 
+$recaptchaEnabled = \Core\Settings::get('enable_recaptcha') === '1';
+$siteKey = \Core\Settings::get('recaptcha_site_key');
+include ROOT_PATH . '/themes/antigravity/partials/header.php'; 
+?>
+
+<?php if ($recaptchaEnabled && !empty($siteKey)): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <div class="container" style="max-width: 640px; margin: 60px auto;">
 
@@ -42,6 +50,12 @@
                 <div class="pw-strength-bar"><div id="pw-strength-fill"></div></div>
                 <span class="form-hint" id="pw-hint">Enter a password</span>
             </div>
+
+            <?php if ($recaptchaEnabled && !empty($siteKey)): ?>
+            <div class="form-group" style="display:flex; justify-content:center; margin-top: 10px;">
+                <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($siteKey) ?>" data-theme="dark"></div>
+            </div>
+            <?php endif; ?>
 
             <button type="submit" class="btn btn-primary magnetic auth-submit">Create Account →</button>
 

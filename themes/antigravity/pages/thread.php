@@ -1,4 +1,12 @@
-<?php include ROOT_PATH . '/themes/antigravity/partials/header.php'; ?>
+<?php 
+$recaptchaEnabled = \Core\Settings::get('enable_recaptcha') === '1';
+$siteKey = \Core\Settings::get('recaptcha_site_key');
+include ROOT_PATH . '/themes/antigravity/partials/header.php'; 
+?>
+
+<?php if ($recaptchaEnabled && !empty($siteKey)): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <div class="content-left" style="grid-column: span 2;">
     <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -80,6 +88,13 @@
                 <div class="editor-wrap">
                     <textarea name="content" id="post-editor" class="form-control rich-editor" required rows="6" placeholder="Write your reply… Markdown is supported."></textarea>
                 </div>
+                
+                <?php if ($recaptchaEnabled && !empty($siteKey)): ?>
+                <div style="margin-bottom: 16px;">
+                    <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($siteKey) ?>" data-theme="dark"></div>
+                </div>
+                <?php endif; ?>
+                
                 <div class="reply-submit-row">
                     <div class="reply-char-count"><span id="char-count">0</span> characters</div>
                     <button type="submit" class="btn btn-primary magnetic">Post Reply →</button>

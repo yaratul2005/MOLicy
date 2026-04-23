@@ -8,6 +8,39 @@ use Core\Middleware;
 
 class AuthController {
 
+    private function verifyRecaptcha(): bool {
+        if (\Core\Settings::get('enable_recaptcha') !== '1') {
+            return true;
+        }
+
+        $secret = \Core\Settings::get('recaptcha_secret_key');
+        if (empty($secret)) {
+            return true; // fail open if misconfigured
+        }
+
+        $response = $_POST['g-recaptcha-response'] ?? '';
+        if (empty($response)) {
+            return false;
+        }
+
+        $verify = curl_init();
+        curl_setopt($verify, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
+        curl_setopt($verify, CURLOPT_POST, true);
+        curl_setopt($verify, CURLOPT_POSTFIELDS, http_build_query([
+            'secret'   => $secret,
+            'response' => $response,
+            'remoteip' => $_SERVER['REMOTE_ADDR']
+        ]));
+        curl_setopt($verify, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($verify);
+        curl_close($verify);
+
+        if (!$result) return false;
+        $decoded = json_decode($result, true);
+        return $decoded['success'] ?? false;
+    }
+
     public function showLogin() {
         if (Auth::check()) {
             header('Location: /');
@@ -34,7 +67,9 @@ class AuthController {
         $password = $_POST['password'] ?? '';
         $error    = null;
 
-        if (empty($email) || empty($password)) {
+        if (!$this->verifyRecaptcha()) {
+            $error = 'Please complete the reCAPTCHA verification.';
+        } elseif (empty($email) || empty($password)) {
             $error = 'Email and password are required.';
         } else {
             $db = Database::getInstance();
@@ -71,7 +106,9 @@ class AuthController {
         $error    = null;
 
         // Validate
-        if (empty($username) || empty($email) || empty($password)) {
+        if (!$this->verifyRecaptcha()) {
+            $error = 'Please complete the reCAPTCHA verification.';
+        } elseif (empty($username) || empty($email) || empty($password)) {
             $error = 'All fields are required.';
         } elseif (!preg_match('/^[a-zA-Z0-9_]{3,20}$/', $username)) {
             $error = 'Username must be 3–20 characters (letters, numbers, underscores only).';

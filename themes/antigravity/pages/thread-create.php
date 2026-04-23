@@ -1,4 +1,12 @@
-<?php include ROOT_PATH . '/themes/antigravity/partials/header.php'; ?>
+<?php 
+$recaptchaEnabled = \Core\Settings::get('enable_recaptcha') === '1';
+$siteKey = \Core\Settings::get('recaptcha_site_key');
+include ROOT_PATH . '/themes/antigravity/partials/header.php'; 
+?>
+
+<?php if ($recaptchaEnabled && !empty($siteKey)): ?>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<?php endif; ?>
 
 <div class="container" style="max-width: 800px; margin: 40px auto;">
     <div class="thread-header animate-fall-in" style="margin-bottom: 20px;">
@@ -36,6 +44,12 @@
                 
                 <textarea name="content" id="post-editor" class="form-control" required rows="10" placeholder="Type your message here... You can use Markdown." style="border-radius: 0 0 var(--radius-sm) var(--radius-sm); font-family: var(--font-code); resize: vertical;"></textarea>
             </div>
+
+            <?php if ($recaptchaEnabled && !empty($siteKey)): ?>
+            <div style="margin-bottom: 20px;">
+                <div class="g-recaptcha" data-sitekey="<?= htmlspecialchars($siteKey) ?>" data-theme="dark"></div>
+            </div>
+            <?php endif; ?>
 
             <button type="submit" class="btn btn-primary magnetic" style="width: 100%; font-size: 1.1rem; padding: 15px;">Post Thread</button>
         </form>
