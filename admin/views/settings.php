@@ -1,9 +1,10 @@
-<?php require ROOT_PATH . '/themes/antigravity/partials/icons.php'; ?>
+<?php
 /**
  * ACP Settings View
  * @var array  $settings   All current settings
  * @var array  $auditLog   Recent admin actions
  */
+require ROOT_PATH . '/themes/antigravity/partials/icons.php';
 $csrfToken = \Core\Middleware::getCSRFToken();
 $s = $settings; // shorthand
 ?>
