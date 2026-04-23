@@ -9,17 +9,20 @@
 
         <footer class="site-footer">
             <div class="container footer-inner">
+                <?php
+                $footerText = \Core\Settings::get('footer_text', 'Powered by AntiGravity Forum');
+                ?>
                 <p class="footer-brand">
                     <span style="font-family:var(--font-hero);color:var(--color-violet)">Anti<span style="color:var(--color-cyan)">Gravity</span></span>
-                    Forum — Built with physics, shipped with pride.
+                    &mdash; <?= htmlspecialchars($footerText) ?>
                 </p>
                 <nav class="footer-links" aria-label="Footer navigation">
                     <a href="/">Home</a>
+                    <a href="/members">Members</a>
                     <a href="/search">Search</a>
                     <a href="/sitemap.xml">Sitemap</a>
-                    <a href="/robots.txt">Robots</a>
                 </nav>
-                <p class="footer-copy">&copy; <?= date('Y') ?> AntiGravity Forum. All rights reserved.</p>
+                <p class="footer-copy">&copy; <?= date('Y') ?> <?= htmlspecialchars(\Core\Settings::siteTitle()) ?>. All rights reserved.</p>
             </div>
         </footer>
 
@@ -174,6 +177,15 @@
         return Math.floor(diff/86400) + 'd ago';
     }
     </script>
+
+    <?php if (!empty($customJs)): ?>
+    <script><?= $customJs ?></script>
+    <?php endif; ?>
+
+    <?php if (!empty($ga)): ?>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($ga) ?>"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= htmlspecialchars($ga) ?>');</script>
+    <?php endif; ?>
 
 </body>
 </html>

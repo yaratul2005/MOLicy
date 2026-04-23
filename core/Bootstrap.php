@@ -5,6 +5,7 @@ namespace Core;
 use Core\Cache;
 use Core\Middleware;
 use Core\EventEmitter;
+use Core\Settings;
 
 class Bootstrap {
     public function __construct() {
@@ -67,6 +68,24 @@ class Bootstrap {
         $auth = new Auth();
         Cache::init();
         Middleware::securityHeaders();
+        Settings::load();
+
+        // ── Maintenance Mode ─────────────────────────────────────────────
+        if (Settings::maintenanceMode() && !Auth::check()) {
+            $isAdminUser = isset($_SESSION['user_id']) && ($_SESSION['trust_level'] ?? 0) >= 5;
+            if (!$isAdminUser) {
+                $uri = $_SERVER['REQUEST_URI'] ?? '/';
+                $allowed = ['/login', '/logout'];
+                $isAllowed = false;
+                foreach ($allowed as $a) { if (str_starts_with($uri, $a)) { $isAllowed = true; break; } }
+                if (!$isAllowed) {
+                    http_response_code(503);
+                    $msg = htmlspecialchars(Settings::get('maintenance_message', 'We are performing scheduled maintenance. Please check back soon.'));
+                    $title = htmlspecialchars(Settings::siteTitle());
+                    die("<!DOCTYPE html><html><head><title>{$title} — Maintenance</title><style>body{font-family:sans-serif;background:#07070d;color:#f1f5f9;display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center}h1{font-size:2rem}p{color:#94a3b8;max-width:480px}</style></head><body><div><h1>🚧 Under Maintenance</h1><p>{$msg}</p></div></body></html>");
+                }
+            }
+        }
 
         $router = new Router();
 
@@ -102,10 +121,24 @@ class Bootstrap {
         $router->post('/notifications/read-all', 'Modules\Notifications\NotificationController@markAllRead');
 
         // ── Search ───────────────────────────────────────────────────────
-        $router->get('/search',                  function() {
-            $theme = 'antigravity';
-            require ROOT_PATH . "/themes/{$theme}/pages/search.php";
-        });
+        $router->get('/search',                  'Modules\\Forum\\SearchController@index');
+
+        // ── Members directory ────────────────────────────────────────────
+        $router->get('/members',                 'Modules\\Users\\MembersController@index');
+
+        // ── Bookmarks ────────────────────────────────────────────────────
+        $router->post('/bookmark',               'Modules\\Users\\BookmarkController@toggle');
+        $router->get('/bookmarks',               'Modules\\Users\\BookmarkController@index');
+
+        // ── Subscribe / Flag ─────────────────────────────────────────────
+        $router->post('/subscribe',              'Modules\\Forum\\ThreadController@subscribe');
+        $router->post('/flag',                   'Modules\\Forum\\ThreadController@flag');
+
+        // ── Thread edit ──────────────────────────────────────────────────
+        $router->get('/thread/{slug}/edit',      'Modules\\Forum\\ThreadController@edit');
+        $router->post('/thread/{slug}/edit',     'Modules\\Forum\\ThreadController@update');
+        $router->post('/post/{id}/delete',       'Modules\\Forum\\ThreadController@deletePost');
+        $router->post('/post/{id}/edit',         'Modules\\Forum\\ThreadController@editPost');
 
         // ── REST API v1 ──────────────────────────────────────────────────
         $router->get('/api/v1/threads',          'Api\V1\ThreadsApi@index');
@@ -143,6 +176,11 @@ class Bootstrap {
 
         $router->get('/admin/updates',               'Admin\UpdateCenter@index');
         $router->post('/admin/updates/perform',      'Admin\UpdateCenter@perform');
+
+        $router->get('/admin/settings',              'Admin\SettingsManager@index');
+        $router->post('/admin/settings/save',        'Admin\SettingsManager@save');
+
+        $router->get('/admin/analytics',             'Admin\Analytics@index');
 
         // ── SEO Endpoints ────────────────────────────────────────────────
         $router->get('/robots.txt',                  'Admin\SEOManager@robotsTxt');

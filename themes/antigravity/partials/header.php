@@ -1,12 +1,15 @@
 <?php
-/**
- * Site Header Partial
- * Outputs the full <html>, <head>, and opening <body>/<header> structure.
- */
 $currentUser  = \Core\Auth::check() ? \Core\Auth::user() : null;
 $csrfToken    = \Core\Middleware::getCSRFToken();
-$pageTitle    = $pageTitle ?? 'AntiGravity Forum';
-$metaDesc     = $metaDesc ?? 'The most beautiful open-canvas knowledge forum.';
+$siteTitle    = \Core\Settings::siteTitle();
+$siteTagline  = \Core\Settings::siteTagline();
+$siteLogo     = \Core\Settings::get('site_logo');
+$siteFavicon  = \Core\Settings::get('site_favicon');
+$customCss    = \Core\Settings::get('custom_css');
+$customJs     = \Core\Settings::get('custom_js');
+$ga           = \Core\Settings::get('google_analytics');
+$pageTitle    = isset($pageTitle) ? $pageTitle . ' — ' . $siteTitle : $siteTitle;
+$metaDesc     = $metaDesc ?? \Core\Settings::get('meta_description', $siteTagline);
 $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 ?>
 <!DOCTYPE html>
@@ -17,6 +20,7 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
     <title><?= htmlspecialchars($pageTitle) ?></title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <link rel="canonical" href="<?= htmlspecialchars($canonicalUrl) ?>">
+    <?php if ($siteFavicon): ?><link rel="icon" href="<?= htmlspecialchars($siteFavicon) ?>">  <?php endif; ?>
 
     <!-- Open Graph -->
     <meta property="og:title"       content="<?= htmlspecialchars($pageTitle) ?>">
@@ -48,6 +52,9 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
         @keyframes slide-out { to { opacity:0; transform:translateY(-8px); } }
         @keyframes slide-in  { from { opacity:0; transform:translateY(12px); } }
     </style>
+    <?php if (!empty($customCss)): ?>
+    <style id="custom-css"><?= $customCss ?></style>
+    <?php endif; ?>
 </head>
 <body data-user-id="<?= $currentUser ? (int)$currentUser['id'] : '' ?>">
     <div class="site-wrapper">
@@ -62,7 +69,11 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
 
                 <!-- Logo -->
                 <a href="/" class="site-logo" data-no-transition>
-                    <span class="logo-text">Anti<span class="logo-accent">Gravity</span></span>
+                    <?php if (!empty($siteLogo)): ?>
+                        <img src="<?= htmlspecialchars($siteLogo) ?>" alt="<?= htmlspecialchars($siteTitle) ?>" style="max-height:36px;">
+                    <?php else: ?>
+                        <span class="logo-text"><?= htmlspecialchars($siteTitle) ?></span>
+                    <?php endif; ?>
                 </a>
 
                 <!-- Search Bar -->
@@ -77,6 +88,7 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
 
                 <!-- Nav Right -->
                 <nav class="header-nav" aria-label="Main navigation">
+                    <a href="/members" class="btn magnetic" style="display:none" id="btn-members">👥 Members</a>
                     <a href="/thread/create" class="btn btn-primary magnetic" id="btn-new-thread">✍️ New Thread</a>
 
                     <?php if ($currentUser): ?>
