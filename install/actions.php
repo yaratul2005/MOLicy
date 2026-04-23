@@ -30,10 +30,14 @@ if ($action === 'setup_db') {
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$name}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
         $pdo->exec("USE `{$name}`");
 
-        // Run migrations
-        $sql = file_get_contents(__DIR__ . '/../migrations/0000_initial_schema.sql');
-        if ($sql) {
-            $pdo->exec($sql);
+        // Run all migrations
+        $migrations = glob(__DIR__ . '/../migrations/*.sql');
+        sort($migrations);
+        foreach ($migrations as $migrationFile) {
+            $sql = file_get_contents($migrationFile);
+            if ($sql) {
+                $pdo->exec($sql);
+            }
         }
 
         // Save DB config to session temporarily
