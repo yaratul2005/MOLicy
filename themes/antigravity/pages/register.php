@@ -4,6 +4,7 @@
     <div class="thread-card animate-fall-in">
         <h2 style="text-align: center; color: var(--color-cyan); margin-bottom: 20px;">Join AntiGravity</h2>
         <form method="POST" action="/register">
+            <?= \Core\Middleware::csrfField() ?>
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; color: var(--color-text-muted);">Username</label>
                 <input type="text" name="username" class="form-control" required pattern="[a-zA-Z0-9_]{3,20}" title="3-20 characters, alphanumeric and underscore">

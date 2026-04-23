@@ -7,6 +7,7 @@
 
     <div class="thread-card animate-rise-in" style="padding: 30px;">
         <form method="POST" action="/thread/create">
+            <?= \Core\Middleware::csrfField() ?>
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: bold; color: var(--color-text-muted);">Category</label>
                 <select name="category_id" class="form-control" required style="appearance: none; background-color: var(--color-surface-2);">

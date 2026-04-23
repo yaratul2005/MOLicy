@@ -4,6 +4,7 @@
     <div class="thread-card animate-fall-in">
         <h2 style="text-align: center; color: var(--color-cyan); margin-bottom: 20px;">Login</h2>
         <form method="POST" action="/login">
+            <?= \Core\Middleware::csrfField() ?>
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; color: var(--color-text-muted);">Email</label>
                 <input type="email" name="email" class="form-control" required>

@@ -43,6 +43,7 @@
                     <div class="thread-card animate-rise-in" style="margin-top: 40px; padding: 30px; animation-delay: 300ms;">
                         <h3 style="margin-bottom: 20px; color: var(--color-cyan);">Post a Reply</h3>
                         <form method="POST" action="/thread/<?= htmlspecialchars($thread['slug']) ?>/reply">
+                            <?= \Core\Middleware::csrfField() ?>
                             <div style="margin-bottom: 20px;">
                                 <!-- Rich Editor Toolbar -->
                                 <div class="editor-toolbar" style="background: var(--color-surface-2); padding: 10px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; border: 1px solid var(--color-border); border-bottom: none; display: flex; gap: 10px;">
