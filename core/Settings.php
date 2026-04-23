@@ -53,9 +53,9 @@ class Settings {
     public static function set(string $key, mixed $value): void {
         $db = Database::getInstance();
         $db->query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES (:k, :v)
-             ON DUPLICATE KEY UPDATE setting_value = :v",
-            ['k' => $key, 'v' => $value]
+            "INSERT INTO settings (setting_key, setting_value) VALUES (:k, :v1)
+             ON DUPLICATE KEY UPDATE setting_value = :v2",
+            ['k' => $key, 'v1' => $value, 'v2' => $value]
         );
         self::$cache[$key] = $value;
     }
