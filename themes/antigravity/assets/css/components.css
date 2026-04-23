@@ -139,6 +139,68 @@
     box-shadow: none;
 }
 
+/* ── Thread Header ───────────────────────────────────────────────── */
+.breadcrumb { font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.breadcrumb a { color: var(--color-cyan); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+.thread-header { margin-bottom: 36px; }
+.thread-header h1 { font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: 12px; line-height: 1.3; color: var(--color-text-main); font-family: var(--font-hero); }
+.thread-meta-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.85rem; color: var(--color-text-muted); }
+.thread-meta-row .user-link { color: var(--color-amber); font-weight: 600; text-decoration: none; }
+.thread-meta-row .user-link:hover { text-decoration: underline; }
+.sep { opacity: 0.4; }
+.badge-locked, .badge-pinned { font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.badge-locked { background: rgba(239,68,68,.15); color: #ef4444; }
+.badge-pinned { background: rgba(245,158,11,.15); color: var(--color-amber); }
+
+/* ── Post Card Layout ────────────────────────────────────────────── */
+.post-card { display: flex; flex-direction: column; gap: 20px; padding: 28px; margin-bottom: 24px; border-radius: var(--radius-md); background: var(--color-surface-1); border: 1px solid var(--color-border); }
+.post-header { display: flex; align-items: center; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 16px; position: relative; }
+.post-avatar-img, .post-avatar-initials { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--color-border); flex-shrink: 0; }
+.post-avatar-img { object-fit: cover; }
+.post-avatar-initials { background: linear-gradient(135deg, var(--color-violet), var(--color-cyan)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: white; }
+.post-user-info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.post-user-info-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.post-username { font-weight: 700; color: var(--color-text-main); font-size: 1.05rem; text-decoration: none; }
+.post-username:hover { color: var(--color-cyan); }
+.post-trust-badge { background: rgba(99,102,241,0.15); color: var(--color-violet); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.post-user-stats { font-size: 0.8rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.post-number { font-family: var(--font-code); font-size: 0.85rem; color: rgba(255,255,255,0.15); position: absolute; right: 0; top: 0; font-weight: 600; }
+
+.post-body { padding-top: 4px; }
+.post-content-body { font-size: 1.05rem; line-height: 1.8; color: var(--color-text-main); word-break: break-word; font-family: var(--font-body); }
+.post-content-body p { margin-top: 0; margin-bottom: 1.2em; }
+.post-content-body p:last-child { margin-bottom: 0; }
+.post-content-body pre { background: var(--color-void); border: 1px solid rgba(255,255,255,0.03); padding: 16px; border-radius: 12px; overflow-x: auto; margin-bottom: 1.2em; }
+.post-content-body code { font-family: var(--font-code); font-size: 0.9em; color: var(--color-cyan); }
+.post-content-body pre code { color: #e2e8f0; }
+.post-content-body blockquote { border-left: 4px solid var(--color-violet); background: rgba(255,255,255,0.02); padding: 12px 20px; margin: 0 0 1.2em 0; border-radius: 0 8px 8px 0; color: var(--color-text-muted); font-style: italic; }
+.post-content-body img { max-width: 100%; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+
+.post-actions { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+.post-action-btn { display: inline-flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; padding: 6px 14px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); color: var(--color-text-muted); cursor: pointer; text-decoration: none; transition: all 200ms var(--spring-bounce); }
+.post-action-btn:hover { border-color: var(--color-violet); color: var(--color-text-main); background: rgba(99,102,241,0.1); transform: translateY(-2px); text-decoration: none; }
+
+/* ── Reply Box ───────────────────────────────────────────────────── */
+.reply-box { padding: 28px; }
+.reply-box h3 { margin-bottom: 20px; color: var(--color-cyan); font-family: var(--font-hero); }
+.editor-wrap { margin-bottom: 16px; }
+.editor-toolbar { background: var(--color-surface-2); padding: 10px; border-radius: 8px 8px 0 0; border: 1px solid var(--color-border); border-bottom: none; display: flex; gap: 8px; flex-wrap: wrap; }
+.reply-submit-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+.reply-char-count { font-size: 0.8rem; color: var(--color-text-muted); }
+
+/* ── Mobile Overrides ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .thread-header h1 { font-size: 1.5rem; }
+    .post-card { padding: 20px; }
+    .post-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .post-user-info-top { flex-wrap: wrap; }
+    .post-number { position: relative; }
+    .reply-submit-row { flex-direction: column; gap: 12px; align-items: stretch; }
+    .reply-submit-row .btn { width: 100%; justify-content: center; }
+}
+
 /* ── Spinners & Transitions ──────────────────────────────────────── */
 @keyframes spin {
   to { transform: rotate(360deg); }
