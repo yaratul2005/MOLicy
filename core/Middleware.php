@@ -81,10 +81,7 @@ class Middleware {
         file_put_contents($file, json_encode($data), LOCK_EX);
 
         if ($data['hits'] > $limit) {
-            http_response_code(429);
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'Too many requests. Please slow down.']);
-            exit;
+            throw new \Exception("Rate limit exceeded.");
         }
     }
 

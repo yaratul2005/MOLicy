@@ -23,6 +23,12 @@ class NotificationController {
         header('Cache-Control: no-cache');
         header('Connection: keep-alive');
         header('X-Accel-Buffering: no'); // Disable Nginx buffering
+        
+        // CRITICAL: Release session lock so other requests from this user aren't blocked!
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+        
         @ob_end_flush();
 
         $lastId = (int)($_SERVER['HTTP_LAST_EVENT_ID'] ?? 0);

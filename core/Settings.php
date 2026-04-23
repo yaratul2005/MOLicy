@@ -3,104 +3,102 @@
 namespace Core;
 
 /**
- * Settings — Forum-wide configuration loader.
- * All settings are loaded once per request and cached in-process.
- * Admin can update them via the ACP Settings panel.
+ * Settings — manages forum configuration with persistent caching
  */
 class Settings {
-
-    private static array $cache = [];
-    private static bool  $loaded = false;
-
-    /**
-     * Load all settings from DB into memory.
-     */
-    public static function load(): void {
-        if (self::$loaded) return;
-
-        try {
-            $db   = Database::getInstance();
-            $rows = $db->fetchAll("SELECT setting_key, setting_value FROM settings");
-            foreach ($rows as $row) {
-                self::$cache[$row['setting_key']] = $row['setting_value'];
-            }
-        } catch (\Throwable $e) {
-            // DB might not be ready — silently fail with defaults
-        }
-
-        self::$loaded = true;
-    }
+    private static ?array $data = null;
+    private static string $cacheKey = 'forum_settings_all';
 
     /**
-     * Get a setting value.
-     */
-    public static function get(string $key, mixed $default = ''): mixed {
-        self::load();
-        return self::$cache[$key] ?? $default;
-    }
-
-    /**
-     * Get all settings as an associative array.
+     * Get all settings, using cache if available.
      */
     public static function all(): array {
-        self::load();
-        return self::$cache;
+        if (self::$data !== null) {
+            return self::$data;
+        }
+
+        // Try cache first
+        $cached = Cache::get(self::$cacheKey);
+        if ($cached && is_array($cached)) {
+            self::$data = $cached;
+            return self::$data;
+        }
+
+        // Fetch from DB
+        try {
+            $db = Database::getInstance();
+            $rows = $db->fetchAll("SELECT setting_key, setting_value FROM settings");
+            self::$data = [];
+            foreach ($rows as $r) {
+                self::$data[$r['setting_key']] = $r['setting_value'];
+            }
+            
+            // Cache for 1 hour
+            Cache::set(self::$cacheKey, self::$data, 3600);
+        } catch (\Throwable $e) {
+            error_log("Settings load error: " . $e->getMessage());
+            return [];
+        }
+
+        return self::$data;
     }
 
     /**
-     * Set/update a single setting in DB + cache.
+     * Get a specific setting by key.
      */
-    public static function set(string $key, mixed $value): void {
-        $db = Database::getInstance();
-        $db->query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES (:k, :v1)
-             ON DUPLICATE KEY UPDATE setting_value = :v2",
-            ['k' => $key, 'v1' => $value, 'v2' => $value]
-        );
-        self::$cache[$key] = $value;
+    public static function get(string $key, $default = null) {
+        $all = self::all();
+        return $all[$key] ?? $default;
     }
 
     /**
-     * Bulk save an associative array of settings.
+     * Save a single setting and clear cache.
+     */
+    public static function set(string $key, $value): void {
+        $db = Database::getInstance();
+        $existing = $db->fetch("SELECT id FROM settings WHERE setting_key = :k", ['k' => $key]);
+        
+        if ($existing) {
+            $db->query("UPDATE settings SET setting_value = :v WHERE setting_key = :k", ['v' => $value, 'k' => $key]);
+        } else {
+            $db->insert('settings', ['setting_key' => $key, 'setting_value' => $value]);
+        }
+        
+        self::clearCache();
+    }
+
+    /**
+     * Save multiple settings at once and clear cache.
      */
     public static function saveAll(array $data): void {
+        $db = Database::getInstance();
         foreach ($data as $key => $value) {
-            self::set($key, $value);
+            $existing = $db->fetch("SELECT id FROM settings WHERE setting_key = :k", ['k' => $key]);
+            if ($existing) {
+                $db->query("UPDATE settings SET setting_value = :v WHERE setting_key = :k", ['v' => (string)$value, 'k' => $key]);
+            } else {
+                $db->insert('settings', ['setting_key' => $key, 'setting_value' => (string)$value]);
+            }
         }
+        self::clearCache();
     }
 
-    /**
-     * Convenience: is registration enabled?
-     */
-    public static function registrationEnabled(): bool {
-        return (bool)(int)self::get('registration_enabled', '1');
+    public static function clearCache(): void {
+        self::$data = null;
+        Cache::forget(self::$cacheKey);
     }
 
-    /**
-     * Convenience: is maintenance mode active?
-     */
-    public static function maintenanceMode(): bool {
-        return (bool)(int)self::get('maintenance_mode', '0');
-    }
+    // ── Shorthand Helpers ─────────────────────────────────────────────
 
-    /**
-     * Site title.
-     */
     public static function siteTitle(): string {
         return self::get('site_title', 'AntiGravity Forum');
     }
 
-    /**
-     * Site tagline.
-     */
     public static function siteTagline(): string {
-        return self::get('site_tagline', 'The most beautiful forum.');
+        return self::get('site_tagline', '');
     }
 
-    /**
-     * Active theme directory name.
-     */
-    public static function theme(): string {
-        return self::get('site_theme', 'antigravity');
+    public static function maintenanceMode(): bool {
+        return self::get('maintenance_mode') === '1';
     }
 }

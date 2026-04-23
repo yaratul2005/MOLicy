@@ -45,7 +45,26 @@ include ROOT_PATH . '/themes/antigravity/partials/header.php';
         <?php if (!empty($categories)): ?>
             <?php foreach ($categories as $index => $cat): ?>
                 <a href="/category/<?= htmlspecialchars($cat['slug']) ?>" class="category-card animate-rise-in magnetic" style="animation-delay:<?= $index * 80 ?>ms">
-                    <div class="cat-icon"><?= htmlspecialchars($cat['icon'] ?? '💬') ?></div>
+                    <div class="cat-icon" style="color: <?= htmlspecialchars($cat['color'] ?? 'var(--color-violet)') ?>">
+                        <?php 
+                        // Try to find a matching SVG icon, otherwise fallback to the emoji/stored icon
+                        $iconMap = [
+                            'general' => 'chat',
+                            'support' => 'support',
+                            'news'    => 'news',
+                            'updates' => 'updates',
+                            'lounge'  => 'coffee',
+                            'dev'     => 'code',
+                            'rules'   => 'shield'
+                        ];
+                        $iconName = $iconMap[$cat['slug']] ?? null;
+                        if ($iconName) {
+                            echo icon($iconName, '', 28);
+                        } else {
+                            echo htmlspecialchars($cat['icon'] ?? '💬');
+                        }
+                        ?>
+                    </div>
                     <div class="cat-info">
                         <h3><?= htmlspecialchars($cat['name']) ?></h3>
                         <p><?= htmlspecialchars($cat['description']) ?></p>

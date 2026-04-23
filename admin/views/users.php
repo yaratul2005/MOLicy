@@ -1,147 +1,203 @@
 <?php
+$pageTitle = 'User Management';
+$activeNav = 'users';
 $csrfToken = \Core\Middleware::getCSRFToken();
+require __DIR__ . '/partials/layout.php';
 ?>
-<!DOCTYPE html>
-<html lang="en" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <title>Users — ACP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* Base styles inherited from dashboard */
-        :root { --bg:#07070d; --surface:#12121f; --surface2:#1a1a2e; --violet:#7c3aed; --cyan:#06b6d4; --text:#f1f5f9; --muted:#94a3b8; --border:rgba(255,255,255,.06); --danger:#ef4444; }
-        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); padding: 40px; margin: 0; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        h1 { font-family: 'Syne', sans-serif; color: var(--cyan); margin: 0; }
-        .btn { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; text-decoration: none; }
-        .btn:hover { background: rgba(124,58,237,.2); border-color: var(--violet); }
-        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-        .toolbar { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
-        .toolbar input, .toolbar select { padding: 8px 12px; background: rgba(0,0,0,.2); border: 1px solid var(--border); color: var(--text); border-radius: 6px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-        th { color: var(--muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; background: rgba(0,0,0,.2); }
-        tr:hover { background: rgba(255,255,255,.02); }
-        select.inline-edit { background: transparent; border: none; color: var(--cyan); cursor: pointer; }
-        select.inline-edit:focus { outline: none; border-bottom: 1px solid var(--cyan); }
-        .actions { display: flex; gap: 8px; }
-        .actions button { background: transparent; border: none; color: var(--muted); cursor: pointer; padding: 4px; border-radius: 4px; }
-        .actions button:hover { color: var(--danger); background: rgba(239,68,68,.1); }
-        .pagination { padding: 16px; display: flex; justify-content: center; gap: 8px; }
-        .pagination a { padding: 6px 12px; border: 1px solid var(--border); color: var(--text); text-decoration: none; border-radius: 6px; }
-        .pagination a.active { background: var(--violet); border-color: var(--violet); }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>User Management</h1>
-        <div>
-            <a href="/admin" class="btn">← Back to Dashboard</a>
-            <a href="/admin/users/export" class="btn" style="background: rgba(16,185,129,.1); border-color: #10b981; color: #10b981;">📥 Export CSV</a>
-        </div>
-    </div>
 
-    <div class="panel">
-        <form class="toolbar" method="GET" action="/admin/users">
-            <input type="text" name="q" placeholder="Search username/email..." value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
-            <select name="role">
+<div class="acp-topbar">
+    <h1><?= icon('users','',22) ?> User Management</h1>
+    <div class="acp-topbar-actions">
+        <a href="/admin/users/export" class="btn btn-sm btn-success"><?= icon('upload','',14) ?> Export CSV</a>
+        <a href="/admin/email-tools" class="btn btn-sm"><?= icon('email','',14) ?> Email Tools</a>
+    </div>
+</div>
+
+<!-- Alerts -->
+<?php if (isset($_GET['done'])): ?>
+<div class="alert alert-success"><?= icon('check','',15) ?> Action completed.</div>
+<?php endif; ?>
+
+<!-- Toolbar -->
+<div class="panel" style="margin-bottom:20px">
+    <div class="panel-body" style="padding:14px 20px">
+        <form method="GET" action="/admin/users" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <input type="text" name="q" class="form-control" style="max-width:240px"
+                   placeholder="Search username / email…" value="<?= htmlspecialchars($_GET['q'] ?? '') ?>">
+            <select name="role" class="form-control" style="max-width:160px">
                 <option value="">All Roles</option>
-                <option value="admin" <?= ($_GET['role'] ?? '') === 'admin' ? 'selected' : '' ?>>Admins</option>
-                <option value="moderator" <?= ($_GET['role'] ?? '') === 'moderator' ? 'selected' : '' ?>>Moderators</option>
-                <option value="member" <?= ($_GET['role'] ?? '') === 'member' ? 'selected' : '' ?>>Members</option>
+                <option value="admin"     <?= ($_GET['role']??'')  === 'admin'     ? 'selected':'' ?>>Admins</option>
+                <option value="moderator" <?= ($_GET['role']??'')  === 'moderator' ? 'selected':'' ?>>Moderators</option>
+                <option value="member"    <?= ($_GET['role']??'')  === 'member'    ? 'selected':'' ?>>Members</option>
+                <option value="banned"    <?= ($_GET['role']??'')  === 'banned'    ? 'selected':'' ?>>Banned</option>
             </select>
-            <button type="submit" class="btn">Filter</button>
+            <select name="verified" class="form-control" style="max-width:170px">
+                <option value="">All Verification</option>
+                <option value="1" <?= ($_GET['verified']??'') === '1' ? 'selected':'' ?>>Verified</option>
+                <option value="0" <?= ($_GET['verified']??'') === '0' ? 'selected':'' ?>>Unverified</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm"><?= icon('search','',14) ?> Filter</button>
+            <a href="/admin/users" class="btn btn-sm">Reset</a>
         </form>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Role</th>
-                    <th>Trust Lvl</th>
-                    <th>Reputation</th>
-                    <th>Posts</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($users as $u): ?>
-                <tr>
-                    <td style="color:var(--muted)">#<?= $u['id'] ?></td>
-                    <td>
-                        <a href="/u/<?= htmlspecialchars($u['username']) ?>" style="color:var(--text); font-weight:600; text-decoration:none;">
-                            <?= htmlspecialchars($u['username']) ?>
-                        </a><br>
-                        <span style="font-size:0.75rem; color:var(--muted)"><?= htmlspecialchars($u['email']) ?></span>
-                    </td>
-                    <td>
-                        <select class="inline-edit" onchange="updateUser(<?= $u['id'] ?>, 'role', this.value)">
-                            <option value="member" <?= $u['role']==='member'?'selected':'' ?>>Member</option>
-                            <option value="moderator" <?= $u['role']==='moderator'?'selected':'' ?>>Moderator</option>
-                            <option value="admin" <?= $u['role']==='admin'?'selected':'' ?>>Admin</option>
-                            <option value="banned" <?= $u['role']==='banned'?'selected':'' ?>>Banned</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="inline-edit" onchange="updateUser(<?= $u['id'] ?>, 'trust_level', this.value)">
-                            <?php for($i=0; $i<=5; $i++): ?>
-                                <option value="<?= $i ?>" <?= (int)$u['trust_level']===$i?'selected':'' ?>>Level <?= $i ?></option>
-                            <?php endfor; ?>
-                        </select>
-                    </td>
-                    <td><?= $u['reputation'] ?></td>
-                    <td><?= $u['post_count'] ?></td>
-                    <td style="font-size:0.8rem"><?= date('Y-m-d', strtotime($u['created_at'])) ?></td>
-                    <td class="actions">
-                        <button onclick="banUser(<?= $u['id'] ?>)" title="Ban User">🔨</button>
-                        <button onclick="deleteUser(<?= $u['id'] ?>)" title="Delete Permanently">🗑️</button>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-                <?php if (empty($users)): ?>
-                <tr><td colspan="8" style="text-align:center; padding: 40px; color:var(--muted);">No users found.</td></tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-
-        <?php if ($totalPages > 1): ?>
-        <div class="pagination">
-            <?php for($i=1; $i<=$totalPages; $i++): ?>
-                <a href="?page=<?= $i ?>&q=<?= urlencode($_GET['q'] ?? '') ?>&role=<?= urlencode($_GET['role'] ?? '') ?>" class="<?= $page === $i ? 'active' : '' ?>">
-                    <?= $i ?>
-                </a>
-            <?php endfor; ?>
-        </div>
-        <?php endif; ?>
     </div>
+</div>
 
-    <script>
-    const csrf = '<?= $csrfToken ?>';
+<!-- Bulk actions bar -->
+<div id="bulk-bar" style="display:none;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:12px 20px;margin-bottom:16px;align-items:center;gap:12px">
+    <span id="bulk-count" class="text-violet" style="font-weight:600"></span>
+    <button class="btn btn-sm btn-success" onclick="bulkAction('verify')"><?= icon('check','',13) ?> Verify</button>
+    <button class="btn btn-sm btn-danger" onclick="bulkAction('ban')"><?= icon('shield','',13) ?> Ban</button>
+    <button class="btn btn-sm btn-danger" onclick="bulkAction('delete')"><?= icon('trash','',13) ?> Delete</button>
+</div>
 
-    async function updateUser(id, field, value) {
-        const fd = new URLSearchParams();
-        fd.append('user_id', id); fd.append('field', field); fd.append('value', value); fd.append('_csrf_token', csrf);
-        await fetch('/admin/users/update', { method: 'POST', body: fd });
+<div class="panel">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width:36px"><input type="checkbox" id="check-all" onchange="toggleAll(this)"></th>
+                <th>ID</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Trust</th>
+                <th>Posts</th>
+                <th>Rep</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($users as $u): ?>
+        <tr id="urow-<?= $u['id'] ?>">
+            <td><input type="checkbox" class="row-check" value="<?= $u['id'] ?>" onchange="updateBulkBar()"></td>
+            <td class="text-muted mono" style="font-size:0.78rem">#<?= $u['id'] ?></td>
+            <td>
+                <a href="/u/<?= htmlspecialchars($u['username']) ?>" target="_blank"
+                   style="font-weight:600;color:var(--text);text-decoration:none">
+                    <?= htmlspecialchars($u['username']) ?>
+                </a><br>
+                <span class="text-muted mono" style="font-size:0.75rem"><?= htmlspecialchars($u['email']) ?></span>
+            </td>
+            <td>
+                <select class="form-control" style="padding:4px 8px;font-size:0.8rem;width:auto"
+                        onchange="updateUser(<?= $u['id'] ?>, 'role', this.value)">
+                    <option value="member"    <?= $u['role']==='member'    ?'selected':'' ?>>Member</option>
+                    <option value="moderator" <?= $u['role']==='moderator' ?'selected':'' ?>>Moderator</option>
+                    <option value="admin"     <?= $u['role']==='admin'     ?'selected':'' ?>>Admin</option>
+                    <option value="banned"    <?= $u['role']==='banned'    ?'selected':'' ?>>Banned</option>
+                </select>
+            </td>
+            <td>
+                <select class="form-control" style="padding:4px 8px;font-size:0.8rem;width:auto"
+                        onchange="updateUser(<?= $u['id'] ?>, 'trust_level', this.value)">
+                    <?php for($i=0;$i<=5;$i++): ?>
+                    <option value="<?= $i ?>" <?= (int)$u['trust_level']===$i?'selected':'' ?>>Lvl <?= $i ?></option>
+                    <?php endfor; ?>
+                </select>
+            </td>
+            <td><?= number_format($u['post_count']) ?></td>
+            <td><?= number_format($u['reputation']) ?></td>
+            <td>
+                <?php if ($u['is_verified']): ?>
+                    <span class="badge badge-success"><?= icon('check','',11) ?> Verified</span>
+                <?php else: ?>
+                    <span class="badge badge-amber"><?= icon('flag','',11) ?> Unverified</span>
+                <?php endif; ?>
+            </td>
+            <td class="text-muted" style="font-size:0.8rem;white-space:nowrap"><?= date('Y-m-d', strtotime($u['created_at'])) ?></td>
+            <td>
+                <div style="display:flex;gap:4px">
+                    <button class="btn btn-xs" title="Impersonate" onclick="impersonate(<?= $u['id'] ?>)"><?= icon('eye','',12) ?></button>
+                    <?php if (!$u['is_verified']): ?>
+                    <button class="btn btn-xs btn-success" title="Verify" onclick="manualVerify(<?= $u['id'] ?>)"><?= icon('check','',12) ?></button>
+                    <?php endif; ?>
+                    <button class="btn btn-xs btn-danger" title="Delete" onclick="deleteUser(<?= $u['id'] ?>)"><?= icon('trash','',12) ?></button>
+                </div>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+        <?php if (empty($users)): ?>
+        <tr><td colspan="10" style="text-align:center;padding:40px;color:var(--muted)">No users match your filter.</td></tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
+
+    <?php if ($totalPages > 1): ?>
+    <div class="panel-footer" style="display:flex;justify-content:center;gap:8px">
+        <?php for($i=1;$i<=$totalPages;$i++): ?>
+        <a href="?page=<?= $i ?>&q=<?= urlencode($_GET['q']??'') ?>&role=<?= urlencode($_GET['role']??'') ?>"
+           class="btn btn-sm <?= $page===$i?'btn-primary':'' ?>"><?= $i ?></a>
+        <?php endfor; ?>
+    </div>
+    <?php endif; ?>
+</div>
+
+<script>
+const csrf = '<?= htmlspecialchars($csrfToken) ?>';
+
+async function updateUser(id, field, value) {
+    const fd = new URLSearchParams({ user_id:id, field, value, _csrf_token:csrf });
+    await fetch('/admin/users/update', { method:'POST', body:fd });
+}
+
+async function deleteUser(id) {
+    if (!confirm('Permanently delete this user and all their content?')) return;
+    const fd = new URLSearchParams({ user_id:id, _csrf_token:csrf });
+    const r  = await fetch('/admin/users/delete', { method:'POST', body:fd });
+    if ((await r.json()).success) document.getElementById('urow-'+id)?.remove();
+    else alert('Error.');
+}
+
+async function manualVerify(id) {
+    const fd = new URLSearchParams({ user_id:id, _csrf_token:csrf });
+    const r  = await fetch('/admin/email-tools/verify', { method:'POST', body:fd });
+    if ((await r.json()).success) location.reload();
+}
+
+function impersonate(id) {
+    if (!confirm('View the site as this user? (Not yet implemented — opens their profile.)')) return;
+    window.open('/u/' + id, '_blank');
+}
+
+function toggleAll(cb) {
+    document.querySelectorAll('.row-check').forEach(c => c.checked = cb.checked);
+    updateBulkBar();
+}
+
+function updateBulkBar() {
+    const checked = document.querySelectorAll('.row-check:checked');
+    const bar     = document.getElementById('bulk-bar');
+    const count   = document.getElementById('bulk-count');
+    if (checked.length > 0) {
+        bar.style.display = 'flex';
+        count.textContent = checked.length + ' user(s) selected';
+    } else {
+        bar.style.display = 'none';
     }
+}
 
-    async function banUser(id) {
-        if (!confirm('Ban this user?')) return;
-        const fd = new URLSearchParams();
-        fd.append('user_id', id); fd.append('ban_type', 'permanent'); fd.append('_csrf_token', csrf);
-        const res = await fetch('/admin/users/ban', { method: 'POST', body: fd });
-        if ((await res.json()).success) location.reload();
-    }
+async function bulkAction(action) {
+    const ids = [...document.querySelectorAll('.row-check:checked')].map(c => c.value);
+    if (!ids.length) return;
+    if (!confirm(`${action.toUpperCase()} ${ids.length} user(s)?`)) return;
 
-    async function deleteUser(id) {
-        if (!confirm('WARNING: Permanently delete this user? This cannot be undone.')) return;
-        const fd = new URLSearchParams();
-        fd.append('user_id', id); fd.append('_csrf_token', csrf);
-        const res = await fetch('/admin/users/delete', { method: 'POST', body: fd });
-        if ((await res.json()).success) location.reload();
-        else alert('Error deleting user.');
+    for (const id of ids) {
+        const fd = new URLSearchParams({ _csrf_token: csrf });
+        if (action === 'ban') {
+            fd.append('user_id', id); fd.append('field', 'role'); fd.append('value', 'banned');
+            await fetch('/admin/users/update', { method: 'POST', body: fd });
+        } else if (action === 'delete') {
+            fd.append('user_id', id);
+            await fetch('/admin/users/delete', { method: 'POST', body: fd });
+        } else if (action === 'verify') {
+            fd.append('user_id', id);
+            await fetch('/admin/email-tools/verify', { method: 'POST', body: fd });
+        }
     }
-    </script>
+    location.reload();
+}
+</script>
+
+</main>
 </body>
 </html>

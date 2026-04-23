@@ -5,14 +5,16 @@ namespace Modules\Forum;
 use Core\Database;
 use Core\Auth;
 use Core\Middleware;
+use Core\Settings;
 
 class ThreadController {
+    
     private function verifyRecaptcha(): bool {
-        if (\Core\Settings::get('enable_recaptcha') !== '1') {
+        if (Settings::get('enable_recaptcha') !== '1') {
             return true;
         }
 
-        $secret = \Core\Settings::get('recaptcha_secret_key');
+        $secret = Settings::get('recaptcha_secret_key');
         if (empty($secret)) {
             return true;
         }
@@ -22,6 +24,7 @@ class ThreadController {
             return false;
         }
 
+        // Use a timeout for the curl request to prevent hanging
         $verify = curl_init();
         curl_setopt($verify, CURLOPT_URL, "https://www.google.com/recaptcha/api/siteverify");
         curl_setopt($verify, CURLOPT_POST, true);
@@ -32,12 +35,20 @@ class ThreadController {
         ]));
         curl_setopt($verify, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($verify, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($verify, CURLOPT_TIMEOUT, 5); // 5 seconds timeout
         $result = curl_exec($verify);
         curl_close($verify);
 
         if (!$result) return false;
         $decoded = json_decode($result, true);
         return $decoded['success'] ?? false;
+    }
+
+    private function backWithError(string $message) {
+        $_SESSION['error'] = $message;
+        $_SESSION['old_input'] = $_POST;
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
     }
 
     public function show($slug) {
@@ -71,6 +82,7 @@ class ThreadController {
         );
 
         $theme = 'antigravity';
+        $loadEditor = true;
         require ROOT_PATH . "/themes/{$theme}/pages/thread.php";
     }
 
@@ -80,14 +92,25 @@ class ThreadController {
         $db = Database::getInstance();
         $categories = $db->fetchAll("SELECT * FROM categories ORDER BY position ASC");
 
+        $error = $_SESSION['error'] ?? null;
+        $old   = $_SESSION['old_input'] ?? [];
+        unset($_SESSION['error'], $_SESSION['old_input']);
+
         $theme = 'antigravity';
+        $loadEditor = true;
         require ROOT_PATH . "/themes/{$theme}/pages/thread-create.php";
     }
 
     public function store() {
         Middleware::requireAuth();
         Middleware::verifyCSRF();
-        Middleware::rateLimit('thread_create', 5, 300); // 5 threads per 5 min
+        
+        // Rate limiting with better handling
+        try {
+            Middleware::rateLimit('thread_create', 5, 300); // 5 threads per 5 min
+        } catch (\Exception $e) {
+            $this->backWithError("You are posting too fast. Please wait a few minutes.");
+        }
 
         $title       = trim($_POST['title'] ?? '');
         $content     = trim($_POST['content'] ?? '');
@@ -95,17 +118,17 @@ class ThreadController {
         $user        = Auth::user();
 
         if (!$this->verifyRecaptcha()) {
-            die("Please complete the reCAPTCHA verification.");
+            $this->backWithError("Please complete the reCAPTCHA verification.");
         }
 
         if (strlen($title) < 5 || strlen($title) > 200) {
-            die("Title must be between 5 and 200 characters.");
+            $this->backWithError("Title must be between 5 and 200 characters.");
         }
         if (strlen($content) < 10) {
-            die("Content must be at least 10 characters.");
+            $this->backWithError("Content must be at least 10 characters.");
         }
         if ($category_id < 1) {
-            die("A valid category is required.");
+            $this->backWithError("A valid category is required.");
         }
 
         // Slug generation: lowercase, hyphens, no repeating hyphens
@@ -124,6 +147,7 @@ class ThreadController {
                 'title'        => $title,
                 'slug'         => $slug,
                 'last_post_at' => date('Y-m-d H:i:s'),
+                'reply_count'  => 0
             ]);
 
             $db->insert('posts', [
@@ -140,26 +164,33 @@ class ThreadController {
             header("Location: /thread/{$slug}");
             exit;
         } catch (\Exception $e) {
-            $db->getPDO()->rollBack();
+            if ($db->getPDO()->inTransaction()) {
+                $db->getPDO()->rollBack();
+            }
             error_log("Thread creation error: " . $e->getMessage());
-            die("An error occurred while creating the thread. Please try again.");
+            $this->backWithError("An error occurred while creating the thread. Please try again.");
         }
     }
 
     public function reply($slug) {
         Middleware::requireAuth();
         Middleware::verifyCSRF();
-        Middleware::rateLimit('reply_create', 10, 60); // 10 replies per minute
+        
+        try {
+            Middleware::rateLimit('reply_create', 10, 60); // 10 replies per minute
+        } catch (\Exception $e) {
+            $this->backWithError("Slow down! Too many replies.");
+        }
 
         $content = trim($_POST['content'] ?? '');
         $user    = Auth::user();
 
         if (!$this->verifyRecaptcha()) {
-            die("Please complete the reCAPTCHA verification.");
+            $this->backWithError("Please complete the reCAPTCHA verification.");
         }
 
         if (strlen($content) < 2) {
-            die("Reply content is required.");
+            $this->backWithError("Reply content is too short.");
         }
 
         $db = Database::getInstance();
@@ -170,12 +201,11 @@ class ThreadController {
 
         if (!$thread) {
             http_response_code(404);
-            die("Thread not found.");
+            $this->backWithError("Thread not found.");
         }
 
         if ($thread['is_locked']) {
-            http_response_code(403);
-            die("This thread is locked.");
+            $this->backWithError("This thread is locked.");
         }
 
         try {
@@ -200,7 +230,7 @@ class ThreadController {
                 ['id' => $user['id']]
             );
 
-            // Notify thread author (if not replying to own thread)
+            // Notify thread author
             if ($thread['user_id'] !== $user['id']) {
                 $db->insert('notifications', [
                     'user_id'    => $thread['user_id'],
@@ -210,32 +240,9 @@ class ThreadController {
                         'thread_slug'    => $thread['slug'],
                         'post_id'        => $postId,
                         'replier_name'   => $user['username'],
-                        'replier_avatar' => $user['avatar'] ?? null,
                         'preview'        => mb_substr(strip_tags($content), 0, 80),
                     ]),
                 ]);
-            }
-
-            // Parse @mentions and notify
-            preg_match_all('/@([a-zA-Z0-9_]{3,20})/', $content, $mentions);
-            foreach (array_unique($mentions[1]) as $mentionedUsername) {
-                $mentioned = $db->fetch(
-                    "SELECT id FROM users WHERE username = :u",
-                    ['u' => $mentionedUsername]
-                );
-                if ($mentioned && $mentioned['id'] !== $user['id']) {
-                    $db->insert('notifications', [
-                        'user_id' => $mentioned['id'],
-                        'type'    => 'mention',
-                        'data'    => json_encode([
-                            'thread_title'  => $thread['title'],
-                            'thread_slug'   => $thread['slug'],
-                            'post_id'       => $postId,
-                            'mentioner'     => $user['username'],
-                            'preview'       => mb_substr(strip_tags($content), 0, 80),
-                        ]),
-                    ]);
-                }
             }
 
             $pdo->commit();
@@ -243,9 +250,11 @@ class ThreadController {
             header("Location: /thread/{$slug}#post-{$postId}");
             exit;
         } catch (\Exception $e) {
-            $db->getPDO()->rollBack();
+            if ($db->getPDO()->inTransaction()) {
+                $db->getPDO()->rollBack();
+            }
             error_log("Reply creation error: " . $e->getMessage());
-            die("An error occurred while posting your reply. Please try again.");
+            $this->backWithError("An error occurred while posting your reply.");
         }
     }
 }

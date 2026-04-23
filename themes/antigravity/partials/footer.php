@@ -37,21 +37,24 @@
     <script defer src="/themes/antigravity/assets/js/parallax.js"></script>
     <script defer src="/themes/antigravity/assets/js/page-transitions.js"></script>
     <script defer src="/themes/antigravity/assets/js/live.js"></script>
-    <!-- Markdown Editor (EasyMDE) -->
+    <!-- Markdown Editor (Conditional) -->
+    <?php if (isset($loadEditor)): ?>
     <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-          const editors = document.querySelectorAll('.rich-editor');
-          editors.forEach(el => {
+          const editorEl = document.getElementById('post-editor');
+          if (editorEl) {
               window.editorInstance = new EasyMDE({ 
-                  element: el,
+                  element: editorEl,
                   spellChecker: false,
+                  autosave: { enabled: true, uniqueId: "thread_editor_" + (document.body.dataset.userId || 'guest') },
                   status: ["words", "lines"],
                   toolbar: ["bold", "italic", "heading", "|", "quote", "code", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen"]
               });
-          });
+          }
       });
     </script>
+    <?php endif; ?>
 
     <script>
     // ── Header scroll effect ─────────────────────────────────────────

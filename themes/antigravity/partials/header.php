@@ -29,6 +29,13 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
     <meta property="og:url"         content="<?= htmlspecialchars($canonicalUrl) ?>">
     <meta name="twitter:card"       content="summary_large_image">
 
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://www.google.com">
+    <link rel="dns-prefetch" href="https://www.recaptcha.net">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,17 +48,17 @@ $canonicalUrl = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER
     <link rel="stylesheet" href="/themes/antigravity/assets/css/components.css">
     <link rel="stylesheet" href="/themes/antigravity/assets/css/dark-mode.css">
     
-    <!-- Markdown Editor (EasyMDE) -->
+    <!-- Conditional Assets (Loaded via helper in page) -->
+    <?php if (isset($loadEditor)): ?>
     <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     <style>
       .editor-toolbar { border-color: var(--color-border); background: var(--color-surface-2); opacity: 1; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
       .editor-toolbar button { color: var(--color-text-muted); border: none; }
       .editor-toolbar button:hover, .editor-toolbar button.active { background: rgba(255,255,255,0.05); color: var(--color-cyan); border: none; }
-      .editor-toolbar i.separator { border-left-color: var(--color-border); border-right-color: transparent; }
-      .CodeMirror { background: var(--color-surface-1); color: var(--color-text-main); border-color: var(--color-border); border-radius: 0 0 var(--radius-sm) var(--radius-sm); font-family: var(--font-body); }
+      .CodeMirror { background: var(--color-surface-1); color: var(--color-text-main); border-color: var(--color-border); border-radius: 0 0 var(--radius-sm) var(--radius-sm); font-family: var(--font-body); min-height: 200px; }
       .CodeMirror-cursor { border-left-color: var(--color-violet) !important; }
-      .editor-statusbar { color: var(--color-text-muted); }
     </style>
+    <?php endif; ?>
 
     <!-- JSON-LD: Website schema on every page -->
     <?= \Admin\SEOManager::schema('website', []) ?>
