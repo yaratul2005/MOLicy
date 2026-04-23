@@ -4,6 +4,7 @@
  * Run this once to apply Phase 4 schemas if you installed before the installer was patched.
  */
 require __DIR__ . '/core/Bootstrap.php';
+$app = new \Core\Bootstrap(); // Initialize autoloader and config
 
 try {
     $db = \Core\Database::getInstance();
@@ -15,7 +16,7 @@ try {
         if (!empty($statement)) {
             try {
                 $db->query($statement);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore errors like "Column already exists" or "Table already exists"
             }
         }
@@ -26,7 +27,7 @@ try {
     echo "<p><a href='/admin/'>Click here to return to the Admin Dashboard</a></p>";
     echo "<p style='color:red; font-size: 0.8rem;'>Note: You can safely delete this fix-db.php file later.</p>";
     
-} catch (Exception $e) {
+} catch (\Throwable $e) {
     echo "<h1>❌ Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
 }
